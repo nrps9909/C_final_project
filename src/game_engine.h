@@ -3,6 +3,13 @@
 
 typedef struct {
     char name[100];
+    int emotion; // 情感數值
+    char inventory[10][50]; // 背包
+    int inventory_count;
+} Player;
+
+typedef struct {
+    char name[100];
     char background[100];
 } Scene;
 
@@ -10,6 +17,7 @@ typedef struct {
     char name[100];
     char avatar[100];
     char tachie[100];
+    char location[100];  // 新增 location
 } Character;
 
 typedef struct {
@@ -21,6 +29,7 @@ typedef struct {
 typedef struct {
     char text[200];
     char next[50];
+    char event[50];  // 新增 event
 } DialogueOption;
 
 typedef struct {

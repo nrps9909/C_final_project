@@ -1,10 +1,3 @@
-name = "Final Project"
-author = "TA"
-
-[player]
-starter = "start"
-inventory = ["vision-pro"]
-
 [scene.library]
 name = "The School Library"
 background = "assets/scene/library.bmp"
@@ -63,7 +56,7 @@ character = "classmate"
 text = "好，那我們一組吧！想一起來討論看看嗎？"
 [[dialogue.teamup.options]]
 text = "OK，我們去會議室找助教討論吧！"
-event = "change_scene_to_meeting_room"
+next = "change_scene_to_meeting_room"
 
 [dialogue.explanation]
 character = "classmate"
@@ -98,7 +91,7 @@ next = "multiple_endings"
 
 [dialogue.emotion_implementation]
 character = "ta"
-text = "情感變化是一個很好的功能，可以讓遊戲更加引人入勝。你們可以設計一個情感計分系統，透過玩家的選擇來影響角色對玩家的感情。"
+text = "情感變化是一個很好的功能，可以讓遊戲更加引人入勝。你們可以設計一個情感計分系統，透過玩家的選 擇來影響角色對玩家的感情。"
 [[dialogue.emotion_implementation.options]]
 text = "聽起來很棒，我們會試試看。"
 next = "finalize_ideas"

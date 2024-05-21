@@ -19,16 +19,20 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	@mkdir -p $(BIN_DIR)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+	@echo "Build complete: $(TARGET)"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
+	@echo "Compiled $< to $@"
 
 $(OBJ_DIR)/%.o: $(TOMLC99_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
+	@echo "Compiled $< to $@"
 
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
+	@echo "Cleaned up build files"
 
 .PHONY: all clean

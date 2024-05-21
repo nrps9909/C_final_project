@@ -3,14 +3,7 @@
 #include <string.h>
 #include "game_engine.h"
 #include "script_parser.h"
-#include "ui_gui.h"  // 添加這一行
-
-typedef struct {
-    char name[100];
-    int emotion; // 情感數值
-    char inventory[10][50]; // 背包
-    int inventory_count;
-} Player;
+#include "ui_gui.h"
 
 void add_item_to_inventory(Player *player, const char *item) {
     if (player->inventory_count < 10) {
@@ -56,15 +49,29 @@ void handle_event(GameData *gameData, Player *player, const char *event_name) {
 void play_game(GameData *gameData) {
     Player player = {"Player", 50, {{0}}, 0};  // 初始玩家情感值為50，背包為空
     int current_scene = find_scene_index(gameData, "library");
+    if (current_scene == -1) {
+        printf("找不到初始場景：library\n");
+        return;
+    }
+
     while (1) {
         display_scene(gameData, current_scene);
+
         int choice = get_user_choice();
         if (choice == 1) {
             current_scene = find_scene_index(gameData, gameData->dialogues[current_scene].options[0].next);
+            handle_event(gameData, &player, gameData->dialogues[current_scene].options[0].event);
         } else if (choice == 2) {
             current_scene = find_scene_index(gameData, gameData->dialogues[current_scene].options[1].next);
+            handle_event(gameData, &player, gameData->dialogues[current_scene].options[1].event);
+        } else {
+            printf("無效選擇\n");
+            continue;
         }
 
-        handle_event(gameData, &player, gameData->dialogues[current_scene].text);
+        if (current_scene == -1) {
+            printf("找不到下一個場景\n");
+            return;
+        }
     }
 }
