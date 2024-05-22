@@ -6,7 +6,16 @@
 ## 劇本格式
 劇本使用 TOML 格式編寫，包含場景、角色、物品和事件等元素。範例劇本請參見 `example-game/script.toml`。
 
+## 環境建設
+sudo apt-get install libcurl4-openssl-dev
+sudo apt-get install libsdl2-dev
+sudo apt-get install libsdl2-image-dev
+cd .. 返回上一個資料夾
 ## 使用方法
+make
+cd example-game
+../bin/interactive_fiction_engine script.toml
+
 1. 將遊戲劇本放置在 `example-game` 目錄下。
 2. 使用 `make` 編譯程式：
     ```bash
