@@ -17,7 +17,13 @@ int main(int argc, char *argv[]) {
     memset(&gameData, 0, sizeof(GameData));
     parse_script(argv[1], &gameData);
 
-    init_ui();
+    char exec_path[PATH_MAX];
+    if (!realpath(argv[0], exec_path)) {
+        perror("realpath");
+        return 1;
+    }
+
+    init_ui(exec_path);
     play_game(&gameData);
     cleanup_ui();
 

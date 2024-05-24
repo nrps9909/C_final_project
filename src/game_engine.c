@@ -55,10 +55,18 @@ void play_game(GameData *gameData) {
     }
 
     while (1) {
+        fprintf(stderr, "當前場景: %d\n", current_scene);
         display_scene(gameData, current_scene);
 
+        // 顯示對話
+        fprintf(stderr, "顯示對話之前\n");
+        display_dialogue(gameData, current_scene);
+        fprintf(stderr, "顯示對話之後\n");
+
         int choice = get_user_choice();
-        if (choice == 1) {
+        if (choice == -1) {
+            break;  // 用戶選擇退出
+        } else if (choice == 1) {
             current_scene = find_scene_index(gameData, gameData->dialogues[current_scene].options[0].next);
             handle_event(gameData, &player, gameData->dialogues[current_scene].options[0].event);
         } else if (choice == 2) {
@@ -75,3 +83,5 @@ void play_game(GameData *gameData) {
         }
     }
 }
+
+
