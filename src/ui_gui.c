@@ -64,6 +64,8 @@ SDL_Surface* load_image(const char* path) {
     SDL_Surface* img = IMG_Load(path);
     if (!img) {
         fprintf(stderr, "IMG_Load: Couldn't open %s: %s\n", path, IMG_GetError());
+    } else {
+        fprintf(stderr, "IMG_Load: Successfully loaded %s\n", path);
     }
     return img;
 }
@@ -96,6 +98,7 @@ void render_text(const char* message, int x, int y) {
 
 void display_scene(GameData* gameData, int scene_index) {
     const char* background_path = gameData->scenes[scene_index].background;
+    fprintf(stderr, "嘗試加載場景背景: %s\n", background_path);
     SDL_Surface* background = load_image(background_path);
     if (!background) {
         fprintf(stderr, "Failed to load image: %s\n", background_path);
@@ -120,6 +123,7 @@ void display_scene(GameData* gameData, int scene_index) {
         if (strlen(gameData->characters[i].location) > 0 &&
             strcmp(gameData->characters[i].location, gameData->scenes[scene_index].name) == 0) {
             const char* tachie_path = gameData->characters[i].tachie;
+            fprintf(stderr, "嘗試加載角色立繪: %s\n", tachie_path);
             SDL_Surface* tachie = load_image(tachie_path);
             if (!tachie) {
                 fprintf(stderr, "Failed to load image: %s\n", tachie_path);
@@ -137,7 +141,7 @@ void display_scene(GameData* gameData, int scene_index) {
             SDL_RenderCopy(renderer, tachie_texture, NULL, &tachie_rect);
             SDL_DestroyTexture(tachie_texture);
 
-            SDL_FreeSurface(tachie);  // Free surface after creating texture
+            SDL_FreeSurface(tachie);  // 創建紋理後釋放表面
         }
     }
 
