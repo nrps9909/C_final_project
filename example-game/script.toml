@@ -1,41 +1,41 @@
 [scene.library]
 name = "The School Library"
-background = "assets/scene/library.bmp"
+background = "example-game/assets/scene/library.bmp"
 
 [scene.meeting-room]
 name = "The Meeting Room"
-background = "assets/scene/meeting-room.bmp"
+background = "example-game/assets/scene/meeting-room.bmp"
 
 [scene.cafeteria]
 name = "The Cafeteria"
-background = "assets/scene/cafeteria.bmp"
+background = "example-game/assets/scene/cafeteria.bmp"
 
 [character.classmate]
 name = "Alice (your classmate)"
-avatar = "assets/character/alice/avatar.bmp"
-tachie = "assets/character/alice/tachie.bmp"
+avatar = "example-game/assets/character/alice/avatar.bmp"
+tachie = "example-game/assets/character/alice/tachie.bmp"
 
 [character.ta]
 location = "meeting-room"
 name = "Teaching Assistant"
-avatar = "assets/character/ta/avatar.bmp"
-tachie = "assets/character/ta/tachie.bmp"
+avatar = "example-game/assets/character/ta/avatar.bmp"
+tachie = "example-game/assets/character/ta/tachie.bmp"
 
 [character.librarian]
 location = "library"
 name = "Librarian"
-avatar = "assets/character/librarian/avatar.bmp"
-tachie = "assets/character/librarian/tachie.bmp"
+avatar = "example-game/assets/character/librarian/avatar.bmp"
+tachie = "example-game/assets/character/librarian/tachie.bmp"
 
 [item.vision-pro]
 name = "Vision Pro"
 description = "A spatial computer"
-icon = "assets/item/vision-pro/icon.bmp"
+icon = "example-game/assets/item/vision-pro/icon.bmp"
 
 [item.book]
 name = "Old Book"
 description = "A mysterious old book"
-icon = "assets/item/book/icon.bmp"
+icon = "example-game/assets/item/book/icon.bmp"
 
 [event.start]
 scene = "library"

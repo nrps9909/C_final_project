@@ -23,7 +23,7 @@ cd example-game
     ```
 3. 運行遊戲：
     ```bash
-    ./engine ./example-game/
+    bin/interactive_fiction_engine example-game/script.toml
     ```
 
 ## 引擎功能
