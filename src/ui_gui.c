@@ -11,11 +11,8 @@
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 static TTF_Font* font = NULL;
-static char base_path[PATH_MAX];
 
-void init_ui(const char *exec_path) {
-    strncpy(base_path, exec_path, sizeof(base_path) - 1);
-
+void init_ui() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
         exit(1);
@@ -26,8 +23,7 @@ void init_ui(const char *exec_path) {
         exit(1);
     }
 
-    char font_path[PATH_MAX];
-    snprintf(font_path, sizeof(font_path), "third-party/TTF/setofont.ttf");
+    const char* font_path = "third-party/TTF/setofont.ttf";
     font = TTF_OpenFont(font_path, 24);
     if (!font) {
         fprintf(stderr, "Failed to load font! TTF_Error: %s\n", TTF_GetError());
@@ -65,16 +61,9 @@ void cleanup_ui() {
 }
 
 SDL_Surface* load_image(const char* path) {
-    char full_path[PATH_MAX];
-    int ret = snprintf(full_path, sizeof(full_path), "%s/%s", base_path, path);
-    if (ret < 0 || (size_t)ret >= sizeof(full_path)) {
-        fprintf(stderr, "Path truncated: %s/%s\n", base_path, path);
-        return NULL;
-    }
-
-    SDL_Surface* img = IMG_Load(full_path);
+    SDL_Surface* img = IMG_Load(path);
     if (!img) {
-        fprintf(stderr, "IMG_Load: Couldn't open %s: %s\n", full_path, IMG_GetError());
+        fprintf(stderr, "IMG_Load: Couldn't open %s: %s\n", path, IMG_GetError());
     }
     return img;
 }
@@ -104,7 +93,6 @@ void render_text(const char* message, int x, int y) {
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
 }
-
 
 void display_scene(GameData* gameData, int scene_index) {
     const char* background_path = gameData->scenes[scene_index].background;
@@ -145,14 +133,17 @@ void display_scene(GameData* gameData, int scene_index) {
                 continue;
             }
 
-            SDL_FreeSurface(tachie);
-
             SDL_Rect tachie_rect = { 600, 100, tachie->w, tachie->h };  // 設置立繪顯示位置和大小
             SDL_RenderCopy(renderer, tachie_texture, NULL, &tachie_rect);
             SDL_DestroyTexture(tachie_texture);
+
+            SDL_FreeSurface(tachie);  // Free surface after creating texture
         }
     }
+
+    SDL_RenderPresent(renderer);
 }
+
 
 void display_dialogue(GameData* gameData, int dialogue_index) {
     if (!gameData) {
