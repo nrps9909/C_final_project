@@ -83,5 +83,3 @@ void play_game(GameData *gameData) {
         }
     }
 }
-
-

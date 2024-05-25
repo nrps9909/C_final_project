@@ -33,6 +33,7 @@ typedef struct {
 } DialogueOption;
 
 typedef struct {
+    char name[100];  // 確保包含 name 字段
     char character[50];
     char text[200];
     DialogueOption options[2];

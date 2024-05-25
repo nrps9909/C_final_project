@@ -11,6 +11,9 @@
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 static TTF_Font* font = NULL;
+static SDL_Texture* dialogue_box_texture = NULL;
+static int window_width = 1920;
+static int window_height = 1080;
 
 void init_ui() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -38,7 +41,7 @@ void init_ui() {
 
     window = SDL_CreateWindow("Interactive Fiction Engine",
                               SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              800, 600, SDL_WINDOW_SHOWN);
+                              window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
     if (!window) {
         fprintf(stderr, "Window could not be created! SDL_Error: %s\n", SDL_GetError());
         exit(1);
@@ -49,9 +52,24 @@ void init_ui() {
         fprintf(stderr, "Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
         exit(1);
     }
+
+    // 獲取全螢幕模式下的實際窗口大小
+    SDL_GetWindowSize(window, &window_width, &window_height);
+
+    // 加載對話框圖像
+    SDL_Surface* dialogue_box_surface = IMG_Load("third-party/Picture/text_rect.png");
+    if (!dialogue_box_surface) {
+        fprintf(stderr, "Unable to load image %s! SDL_image Error: %s\n", "path/to/your/dialogue_box_image.png", IMG_GetError());
+        exit(1);
+    }
+    dialogue_box_texture = SDL_CreateTextureFromSurface(renderer, dialogue_box_surface);
+    SDL_FreeSurface(dialogue_box_surface);
 }
 
 void cleanup_ui() {
+    if (dialogue_box_texture) {
+        SDL_DestroyTexture(dialogue_box_texture);
+    }
     TTF_CloseFont(font);
     TTF_Quit();
     SDL_DestroyRenderer(renderer);
@@ -76,7 +94,7 @@ void render_text(const char* message, int x, int y) {
         return;
     }
 
-    SDL_Color color = {255, 255, 255, 255};  // 白色文字，初始化 alpha 通道
+    SDL_Color color = {0, 0, 0, 255};  // 白色文字，初始化 alpha 通道
     SDL_Surface* surface = TTF_RenderUTF8_Blended(font, message, color);
     if (!surface) {
         fprintf(stderr, "TTF_RenderUTF8_Blended 失敗: %s\n", TTF_GetError());
@@ -114,8 +132,10 @@ void display_scene(GameData* gameData, int scene_index) {
 
     SDL_FreeSurface(background);
 
+    SDL_GetWindowSize(window, &window_width, &window_height);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_Rect dstrect = {0, 0, window_width, window_height};
+    SDL_RenderCopy(renderer, texture, NULL, &dstrect);
     SDL_DestroyTexture(texture);
 
     // 顯示角色立繪
@@ -137,7 +157,9 @@ void display_scene(GameData* gameData, int scene_index) {
                 continue;
             }
 
-            SDL_Rect tachie_rect = { 600, 100, tachie->w, tachie->h };  // 設置立繪顯示位置和大小
+            int tachie_x = (int)(window_width * 0.75);
+            int tachie_y = (int)(window_height * 0.1);
+            SDL_Rect tachie_rect = { tachie_x, tachie_y, tachie->w, tachie->h };  // 設置立繪顯示位置和大小
             SDL_RenderCopy(renderer, tachie_texture, NULL, &tachie_rect);
             SDL_DestroyTexture(tachie_texture);
 
@@ -147,7 +169,6 @@ void display_scene(GameData* gameData, int scene_index) {
 
     SDL_RenderPresent(renderer);
 }
-
 
 void display_dialogue(GameData* gameData, int dialogue_index) {
     if (!gameData) {
@@ -162,27 +183,32 @@ void display_dialogue(GameData* gameData, int dialogue_index) {
 
     fprintf(stderr, "顯示對話: %s\n", gameData->dialogues[dialogue_index].text);
 
+    SDL_GetWindowSize(window, &window_width, &window_height);
     // 設置對話框背景
-    SDL_Rect dialogueRect = {0, 450, 800, 150};
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 200);  // 黑色背景，帶透明度
-    SDL_RenderFillRect(renderer, &dialogueRect);
+    SDL_Rect dialogueRect = {0, window_height - 300, 600, 200};  // 對話框位置和大小
+    SDL_RenderCopy(renderer, dialogue_box_texture, NULL, &dialogueRect);  // 渲染對話框圖像
 
     // 顯示角色對話
-    render_text(gameData->dialogues[dialogue_index].character, 50, 460);
-    render_text(gameData->dialogues[dialogue_index].text, 50, 500);
+    int text_x = dialogueRect.x + 18;
+    int text_y = dialogueRect.y + 18;
+    render_text(gameData->dialogues[dialogue_index].character, text_x, text_y); 
+    text_x += 20;
+    text_y += 50;  // 調整對話文本的位置
+    render_text(gameData->dialogues[dialogue_index].text, text_x, text_y);
 
     // 顯示選項
+    text_x += 30;
+    text_y += 50;  // 調整選項文本的位置
     for (int i = 0; i < 2; i++) {
         if (strlen(gameData->dialogues[dialogue_index].options[i].text) > 0) {
             char option_text[256];
             snprintf(option_text, sizeof(option_text), "%d. %s", i + 1, gameData->dialogues[dialogue_index].options[i].text);
-            render_text(option_text, 50, 550 + i * 30);
+            render_text(option_text, text_x, text_y + i * 30);
         }
     }
 
     SDL_RenderPresent(renderer);
 }
-
 int get_user_choice() {
     SDL_Event e;
     while (1) {
