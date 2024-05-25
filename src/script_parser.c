@@ -113,6 +113,7 @@ void parse_script(const char *filename, GameData *gameData) {
         for (int i = 0; i < 16; i++) {
             toml_table_t *dialogue = toml_table_in(dialogues, dialogue_keys[i]);
             if (dialogue) {
+                strncpy(gameData->dialogues[i].name, dialogue_keys[i], sizeof(gameData->dialogues[i].name) - 1); // 添加這一行
                 toml_raw_t raw_character = toml_raw_in(dialogue, "character");
                 toml_raw_t raw_text = toml_raw_in(dialogue, "text");
                 toml_array_t *options = toml_array_in(dialogue, "options");

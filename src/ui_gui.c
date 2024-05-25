@@ -209,6 +209,7 @@ void display_dialogue(GameData* gameData, int dialogue_index) {
 
     SDL_RenderPresent(renderer);
 }
+
 int get_user_choice() {
     SDL_Event e;
     while (1) {
