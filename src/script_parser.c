@@ -42,7 +42,6 @@ void parse_script(const char *filename, GameData *gameData) {
     }
 
     // 解析角色
-    // 解析角色
     toml_table_t *characters = toml_table_in(root, "character");
     if (characters) {
         const char *char_keys[] = {"classmate", "ta", "librarian"};
@@ -63,12 +62,7 @@ void parse_script(const char *filename, GameData *gameData) {
                     toml_rtos(raw_tachie, &tachie);
                     if (raw_location) {
                         toml_rtos(raw_location, &location);
-                        // 將 location 轉換為場景的 name
-                        if (strcmp(location, "The Meeting Room") == 0) {
-                            strncpy(gameData->characters[i].location, "meeting-room", sizeof(gameData->characters[i].location) - 1);
-                        } else if (strcmp(location, "The School Library") == 0) {
-                            strncpy(gameData->characters[i].location, "library", sizeof(gameData->characters[i].location) - 1);
-                        }
+                        strncpy(gameData->characters[i].location, location, sizeof(gameData->characters[i].location) - 1);
                         free(location);
                     }
                     strncpy(gameData->characters[i].name, name, sizeof(gameData->characters[i].name) - 1);
@@ -113,11 +107,12 @@ void parse_script(const char *filename, GameData *gameData) {
     // 解析對話
     toml_table_t *dialogues = toml_table_in(root, "dialogue");
     if (dialogues) {
-        const char *dialogue_keys[] = {"hello", "teamup", "explanation", "ta_intro", "ta_discuss", "emotion_implementation", "multiple_endings", "finalize_ideas", "simplify_discussion", "time_management", "start_working", "work_division", "task_listing", "ending_good", "ending_bad", "ending_neutral"};
-        for (int i = 0; i < 16; i++) {
+        const char *dialogue_keys[] = {"hello", "teamup", "explanation", "ta_intro", "ta_discuss", "emotion_implementation", "multiple_endings", "finalize_ideas", "simplify_discussion", "time_management", "start_working", "work_division", "task_listing", "ending_good", "ending_bad", "ending_neutral", "project_progress_good", "project_progress_bad", "project_progress_neutral"};
+        for (int i = 0; i < 19; i++) {
             toml_table_t *dialogue = toml_table_in(dialogues, dialogue_keys[i]);
             if (dialogue) {
                 strncpy(gameData->dialogues[i].name, dialogue_keys[i], sizeof(gameData->dialogues[i].name) - 1);
+                fprintf(stderr, "解析到對話: %s\n", gameData->dialogues[i].name);  // 增加調試信息
                 toml_raw_t raw_scene = toml_raw_in(dialogue, "scene");
                 toml_raw_t raw_character = toml_raw_in(dialogue, "character");
                 toml_raw_t raw_text = toml_raw_in(dialogue, "text");
