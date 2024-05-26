@@ -13,10 +13,10 @@ background = "example-game/assets/scene/cafeteria.bmp"
 [character.classmate]
 name = "Alice (your classmate)"
 avatar = "example-game/assets/character/alice/avatar.bmp"
-tachie = "example-game/assets/character/alice/tachie.bmp"
+tachie = "example-game/assets/character/alice/tachie.bmp"   
 
 [character.ta]
-location = "library"
+location = "meeting-room"
 name = "Teaching Assistant"
 avatar = "example-game/assets/character/ta/avatar.bmp" 
 tachie = "example-game/assets/character/ta/tachie.bmp"
