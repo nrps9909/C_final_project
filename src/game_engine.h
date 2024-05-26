@@ -3,9 +3,10 @@
 
 typedef struct {
     char name[100];
-    int emotion; // 情感數值
-    char inventory[10][50]; // 背包
+    int emotion;
+    char inventory[10][50];
     int inventory_count;
+    int current_scene;  // 添加 current_scene 成員
 } Player;
 
 typedef struct {
@@ -17,7 +18,7 @@ typedef struct {
     char name[100];
     char avatar[100];
     char tachie[100];
-    char location[100];  // 新增 location
+    char location[50];  // 將長度改為 50,與場景的 name 屬性一致
 } Character;
 
 typedef struct {
@@ -29,21 +30,24 @@ typedef struct {
 typedef struct {
     char text[200];
     char next[50];
-    char event[50];  // 新增 event
+    char event[50];
 } DialogueOption;
 
 typedef struct {
+    char name[100];    // 添加 name 成員
+    char scene[50];    // 添加 scene 成員
     char character[50];
-    char text[200];
+    char text[512];
     DialogueOption options[2];
 } Dialogue;
 
 typedef struct {
+    char name[100];    // 添加 name 成員
     char scene[50];
     char dialogue[50];
     char action[50];
     char result[50];
-    char item[50]; // 新增這個字段來處理 "add_item" 事件
+    char item[50];
 } Event;
 
 typedef struct {
@@ -56,5 +60,6 @@ typedef struct {
 } GameData;
 
 void play_game(GameData *gameData);
+int find_scene_index(GameData *gameData, const char *scene_name);
 
 #endif // GAME_ENGINE_H

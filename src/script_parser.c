@@ -42,6 +42,7 @@ void parse_script(const char *filename, GameData *gameData) {
     }
 
     // 解析角色
+    // 解析角色
     toml_table_t *characters = toml_table_in(root, "character");
     if (characters) {
         const char *char_keys[] = {"classmate", "ta", "librarian"};
@@ -51,7 +52,7 @@ void parse_script(const char *filename, GameData *gameData) {
                 toml_raw_t raw_name = toml_raw_in(character, "name");
                 toml_raw_t raw_avatar = toml_raw_in(character, "avatar");
                 toml_raw_t raw_tachie = toml_raw_in(character, "tachie");
-                toml_raw_t raw_location = toml_raw_in(character, "location");  // 解析位置
+                toml_raw_t raw_location = toml_raw_in(character, "location");
                 if (raw_name && raw_avatar && raw_tachie) {
                     char *name;
                     char *avatar;
@@ -61,15 +62,18 @@ void parse_script(const char *filename, GameData *gameData) {
                     toml_rtos(raw_avatar, &avatar);
                     toml_rtos(raw_tachie, &tachie);
                     if (raw_location) {
-                        toml_rtos(raw_location, &location);  // 解析位置
+                        toml_rtos(raw_location, &location);
+                        // 將 location 轉換為場景的 name
+                        if (strcmp(location, "The Meeting Room") == 0) {
+                            strncpy(gameData->characters[i].location, "meeting-room", sizeof(gameData->characters[i].location) - 1);
+                        } else if (strcmp(location, "The School Library") == 0) {
+                            strncpy(gameData->characters[i].location, "library", sizeof(gameData->characters[i].location) - 1);
+                        }
+                        free(location);
                     }
                     strncpy(gameData->characters[i].name, name, sizeof(gameData->characters[i].name) - 1);
                     strncpy(gameData->characters[i].avatar, avatar, sizeof(gameData->characters[i].avatar) - 1);
                     strncpy(gameData->characters[i].tachie, tachie, sizeof(gameData->characters[i].tachie) - 1);
-                    if (location) {
-                        strncpy(gameData->characters[i].location, location, sizeof(gameData->characters[i].location) - 1);
-                        free(location);
-                    }
                     free(name);
                     free(avatar);
                     free(tachie);
@@ -113,17 +117,23 @@ void parse_script(const char *filename, GameData *gameData) {
         for (int i = 0; i < 16; i++) {
             toml_table_t *dialogue = toml_table_in(dialogues, dialogue_keys[i]);
             if (dialogue) {
+                strncpy(gameData->dialogues[i].name, dialogue_keys[i], sizeof(gameData->dialogues[i].name) - 1);
+                toml_raw_t raw_scene = toml_raw_in(dialogue, "scene");
                 toml_raw_t raw_character = toml_raw_in(dialogue, "character");
                 toml_raw_t raw_text = toml_raw_in(dialogue, "text");
                 toml_array_t *options = toml_array_in(dialogue, "options");
 
-                if (raw_character && raw_text) {
+                if (raw_scene && raw_character && raw_text) {
+                    char *scene;
                     char *character;
                     char *text;
+                    toml_rtos(raw_scene, &scene);
                     toml_rtos(raw_character, &character);
                     toml_rtos(raw_text, &text);
+                    strncpy(gameData->dialogues[i].scene, scene, sizeof(gameData->dialogues[i].scene) - 1);
                     strncpy(gameData->dialogues[i].character, character, sizeof(gameData->dialogues[i].character) - 1);
                     strncpy(gameData->dialogues[i].text, text, sizeof(gameData->dialogues[i].text) - 1);
+                    free(scene);
                     free(character);
                     free(text);
 
@@ -132,7 +142,7 @@ void parse_script(const char *filename, GameData *gameData) {
                             toml_table_t *option = toml_table_at(options, j);
                             toml_raw_t raw_option_text = toml_raw_in(option, "text");
                             toml_raw_t raw_next = toml_raw_in(option, "next");
-                            toml_raw_t raw_event = toml_raw_in(option, "event");  // 解析事件
+                            toml_raw_t raw_event = toml_raw_in(option, "event");
                             if (raw_option_text && raw_next) {
                                 char *option_text;
                                 char *next;
@@ -140,12 +150,12 @@ void parse_script(const char *filename, GameData *gameData) {
                                 toml_rtos(raw_option_text, &option_text);
                                 toml_rtos(raw_next, &next);
                                 if (raw_event) {
-                                    toml_rtos(raw_event, &event);  // 解析事件
+                                    toml_rtos(raw_event, &event);
                                 }
                                 strncpy(gameData->dialogues[i].options[j].text, option_text, sizeof(gameData->dialogues[i].options[j].text) - 1);
                                 strncpy(gameData->dialogues[i].options[j].next, next, sizeof(gameData->dialogues[i].options[j].next) - 1);
                                 if (event) {
-                                    strncpy(gameData->dialogues[i].options[j].event, event, sizeof(gameData->dialogues[i].options[j].event) - 1);  // 存儲事件
+                                    strncpy(gameData->dialogues[i].options[j].event, event, sizeof(gameData->dialogues[i].options[j].event) - 1);
                                     free(event);
                                 }
                                 free(option_text);
@@ -165,37 +175,46 @@ void parse_script(const char *filename, GameData *gameData) {
         for (int i = 0; i < 6; i++) {
             toml_table_t *event = toml_table_in(events, event_keys[i]);
             if (event) {
+                strncpy(gameData->events[i].name, event_keys[i], sizeof(gameData->events[i].name) - 1);
                 toml_raw_t raw_scene = toml_raw_in(event, "scene");
                 toml_raw_t raw_dialogue = toml_raw_in(event, "dialogue");
                 toml_raw_t raw_action = toml_raw_in(event, "action");
                 toml_raw_t raw_result = toml_raw_in(event, "result");
                 toml_raw_t raw_item = toml_raw_in(event, "item");
 
-                if (raw_scene && raw_dialogue && raw_action && raw_result) {
+                if (raw_scene) {
                     char *scene;
-                    char *dialogue;
-                    char *action;
-                    char *result;
-                    char *item = NULL;
                     toml_rtos(raw_scene, &scene);
-                    toml_rtos(raw_dialogue, &dialogue);
-                    toml_rtos(raw_action, &action);
-                    toml_rtos(raw_result, &result);
-                    if (raw_item) {
-                        toml_rtos(raw_item, &item);
-                    }
                     strncpy(gameData->events[i].scene, scene, sizeof(gameData->events[i].scene) - 1);
-                    strncpy(gameData->events[i].dialogue, dialogue, sizeof(gameData->events[i].dialogue) - 1);
-                    strncpy(gameData->events[i].action, action, sizeof(gameData->events[i].action) - 1);
-                    strncpy(gameData->events[i].result, result, sizeof(gameData->events[i].result) - 1);
-                    if (item) {
-                        strncpy(gameData->events[i].item, item, sizeof(gameData->events[i].item) - 1);
-                        free(item);
-                    }
                     free(scene);
+                }
+
+                if (raw_dialogue) {
+                    char *dialogue;
+                    toml_rtos(raw_dialogue, &dialogue);
+                    strncpy(gameData->events[i].dialogue, dialogue, sizeof(gameData->events[i].dialogue) - 1);
                     free(dialogue);
+                }
+
+                if (raw_action) {
+                    char *action;
+                    toml_rtos(raw_action, &action);
+                    strncpy(gameData->events[i].action, action, sizeof(gameData->events[i].action) - 1);
                     free(action);
+                }
+
+                if (raw_result) {
+                    char *result;
+                    toml_rtos(raw_result, &result);
+                    strncpy(gameData->events[i].result, result, sizeof(gameData->events[i].result) - 1);
                     free(result);
+                }
+
+                if (raw_item) {
+                    char *item;
+                    toml_rtos(raw_item, &item);
+                    strncpy(gameData->events[i].item, item, sizeof(gameData->events[i].item) - 1);
+                    free(item);
                 }
             }
         }
@@ -203,3 +222,4 @@ void parse_script(const char *filename, GameData *gameData) {
 
     toml_free(root);
 }
+
