@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <limits.h>
 #include "game_engine.h"
 #include "script_parser.h"
 #include "ui_gui.h"

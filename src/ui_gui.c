@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <limits.h>
 #include "ui_gui.h"
+#include "game_engine.h"
 
 // SDL_Window and SDL_Renderer pointers
 static SDL_Window* window = NULL;
@@ -94,7 +95,7 @@ void render_text(const char* message, int x, int y) {
         return;
     }
 
-    SDL_Color color = {0, 0, 0, 255};  // 白色文字，初始化 alpha 通道
+    SDL_Color color = {0, 0, 0, 255};  // 白色文字,初始化 alpha 通道
     SDL_Surface* surface = TTF_RenderUTF8_Blended(font, message, color);
     if (!surface) {
         fprintf(stderr, "TTF_RenderUTF8_Blended 失敗: %s\n", TTF_GetError());
@@ -114,12 +115,17 @@ void render_text(const char* message, int x, int y) {
     SDL_DestroyTexture(texture);
 }
 
-void display_scene(GameData* gameData, int scene_index) {
+void display_scene(GameData* gameData, const char* scene_name) {
+    int scene_index = find_scene_index(gameData, scene_name);
+    if (scene_index < 0 || scene_index >= 10) {
+        fprintf(stderr, "無效的場景索引: %d\n", scene_index);
+        return;
+    }
+
     const char* background_path = gameData->scenes[scene_index].background;
-    fprintf(stderr, "嘗試加載場景背景: %s\n", background_path);
     SDL_Surface* background = load_image(background_path);
     if (!background) {
-        fprintf(stderr, "Failed to load image: %s\n", background_path);
+        fprintf(stderr, "無法加載背景圖像: %s\n", background_path);
         return;
     }
 
@@ -227,5 +233,8 @@ int get_user_choice() {
                 }
             }
         }
+        // 添加一個默認返回值,以避免函數在某些情況下沒有返回值
+        SDL_Delay(100);  // 延遲100毫秒,避免過高的CPU佔用
     }
+    return -1;  // 默認返回-1
 }
