@@ -2,27 +2,28 @@
 #define GAME_ENGINE_H
 
 typedef struct {
-    char name[100];
+    char name[50];
     int emotion;
     char inventory[10][50];
     int inventory_count;
-    int current_scene;  // 添加 current_scene 成員
+    int current_scene;
+    int current_dialogue;  // 添加 current_dialogue 成員
 } Player;
 
 typedef struct {
-    char name[100];
+    char name[50];
     char background[100];
 } Scene;
 
 typedef struct {
-    char name[100];
+    char name[50];
     char avatar[100];
     char tachie[100];
-    char location[50];  // 將長度改為 50,與場景的 name 屬性一致
+    char location[50];
 } Character;
 
 typedef struct {
-    char name[100];
+    char name[50];
     char description[200];
     char icon[100];
 } Item;
@@ -34,15 +35,15 @@ typedef struct {
 } DialogueOption;
 
 typedef struct {
-    char name[100];    // 添加 name 成員
-    char scene[50];    // 添加 scene 成員
+    char name[50];
+    char scene[50];
     char character[50];
-    char text[512];
+    char text[200];
     DialogueOption options[2];
 } Dialogue;
 
 typedef struct {
-    char name[100];    // 添加 name 成員
+    char name[50];
     char scene[50];
     char dialogue[50];
     char action[50];
@@ -56,10 +57,15 @@ typedef struct {
     Item items[10];
     Dialogue dialogues[20];
     Event events[10];
-    int current_emotion;
 } GameData;
 
-void play_game(GameData *gameData);
+void play_game(GameData* gameData);
+void handle_event(GameData *gameData, Player *player, const char *event_name);
 int find_scene_index(GameData *gameData, const char *scene_name);
+int find_dialogue_index(GameData *gameData, const char *dialogue_name);
+void add_item_to_inventory(Player *player, const char *item);
+void update_emotion(Player *player, int change);
+void display_emotion(Player* player);
+void display_inventory(Player *player);
 
 #endif // GAME_ENGINE_H

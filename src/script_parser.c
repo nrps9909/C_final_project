@@ -107,7 +107,7 @@ void parse_script(const char *filename, GameData *gameData) {
     // 解析對話
     toml_table_t *dialogues = toml_table_in(root, "dialogue");
     if (dialogues) {
-        const char *dialogue_keys[] = {"hello", "teamup", "explanation", "ta_intro", "ta_discuss", "emotion_implementation", "multiple_endings", "finalize_ideas", "simplify_discussion", "time_management", "start_working", "work_division", "task_listing", "ending_good", "ending_bad", "ending_neutral", "project_progress_good", "project_progress_bad", "project_progress_neutral"};
+        const char *dialogue_keys[] = {"hello", "find_book", "explanation", "ta_intro", "book_acquired", "read_book", "project_start", "start_working", "work_division", "task_listing", "project_progress_good", "project_progress_bad", "project_progress_neutral", "ending_good", "ending_bad", "ending_neutral", "find_more_books", "book_search", "read_more_books"};
         for (int i = 0; i < 19; i++) {
             toml_table_t *dialogue = toml_table_in(dialogues, dialogue_keys[i]);
             if (dialogue) {
@@ -166,7 +166,7 @@ void parse_script(const char *filename, GameData *gameData) {
     // 解析事件
     toml_table_t *events = toml_table_in(root, "event");
     if (events) {
-        const char *event_keys[] = {"start", "change_scene_to_meeting_room", "project_start", "game_over_good", "game_over_bad", "game_over_neutral"};
+        const char *event_keys[] = {"start", "acquire_book", "project_start", "game_over_good", "game_over_bad", "game_over_neutral"};
         for (int i = 0; i < 6; i++) {
             toml_table_t *event = toml_table_in(events, event_keys[i]);
             if (event) {
@@ -217,4 +217,3 @@ void parse_script(const char *filename, GameData *gameData) {
 
     toml_free(root);
 }
-

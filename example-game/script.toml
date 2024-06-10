@@ -47,19 +47,10 @@ character = "classmate"
 text = "嗨！聽說今年的期末專題要做互動式小說引擎喔～"
 [[dialogue.hello.options]]
 text = "哇！太棒了！"
-next = "teamup"  
+next = "find_book"
 [[dialogue.hello.options]]
 text = "那是啥鬼？"
 next = "explanation"
-
-[dialogue.teamup]
-scene = "library"
-character = "classmate" 
-text = "好，那我們一組吧！想一起來討論看看嗎？"
-[[dialogue.teamup.options]]
-text = "OK，我們去會議室找助教討論吧！"
-next = "ta_intro"
-event = "change_scene_to_meeting_room"
 
 [dialogue.explanation]
 scene = "library"
@@ -67,83 +58,47 @@ character = "classmate"
 text = "就是一個讓你創建和玩你自己故事的遊戲平台。聽起來有點複雜，但應該蠻有趣的！"
 [[dialogue.explanation.options]]
 text = "聽起來不錯，告訴我更多！" 
-next = "teamup"
+next = "find_book"
 [[dialogue.explanation.options]]
 text = "好吧，我可能會需要幫助。"
-next = "teamup"
+next = "find_book"
 
-[event.change_scene_to_meeting_room]
-scene = "meeting-room"
-dialogue = "ta_intro"  
+[dialogue.find_book]
+scene = "library"
+character = "librarian"
+text = "你好！這是你需要的那本書。"
+event = "acquire_book"
 
-[dialogue.ta_intro]
-scene = "meeting-room"
-character = "ta"
-text = "你好！來討論期末專題嗎？"
-[[dialogue.ta_intro.options]]
-text = "是的，我們有一些想法想要詢問。"
-next = "ta_discuss"
+[event.acquire_book]
+action = "add_item"
+item = "book"
+dialogue = "book_acquired"
 
-[dialogue.ta_discuss]
-scene = "meeting-room"  
-character = "ta"
-text = "太好了！請告訴我你們的想法。"
-[[dialogue.ta_discuss.options]]
-text = "我們想加入不同角色的情感變化，這樣會怎樣？"
-next = "emotion_implementation"  
-[[dialogue.ta_discuss.options]]
-text = "我們打算探索多重結局的設計。"
-next = "multiple_endings"
+[dialogue.book_acquired]
+scene = "library"
+character = "classmate"
+text = "太好了！這本書看起來很有幫助。"
+[[dialogue.book_acquired.options]]
+text = "我們開始閱讀吧。"
+next = "read_book"
+[[dialogue.book_acquired.options]]
+text = "先去會議室找助教，看看他有什麼建議。"
+next = "ta_intro"
 
-[dialogue.emotion_implementation]
-scene = "meeting-room"
-character = "ta"
-text = "情感變化是一個很好的功能，可以讓遊戲更加引人入勝。你們可以設計一個情感計分系統，透過玩家的選 擇來影響角色對玩家的感情。"
-[[dialogue.emotion_implementation.options]]
-text = "聽起來很棒，我們會試試看。" 
-next = "finalize_ideas"
-[[dialogue.emotion_implementation.options]]  
-text = "這樣會不會太複雜了？"
-next = "simplify_discussion"
-
-[dialogue.multiple_endings]
-scene = "meeting-room"
-character = "ta"
-text = "多重結局是一個很好的方式來增加遊戲的重玩價值。你們應該考慮讓玩家的選擇導向不同的故事路線和結局。"
-[[dialogue.multiple_endings.options]]
-text = "這個主意很好，我們會加入這個功能。"
-next = "finalize_ideas" 
-[[dialogue.multiple_endings.options]]
-text = "可能需要一點時間來實現這個想法。"  
-next = "time_management"
-
-[dialogue.finalize_ideas]
-scene = "meeting-room"
-character = "ta"
-text = "很好，你們似乎已經有了一個明確的方向。開始動手做吧，有任何問題可以隨時來找我討論。"
-[[dialogue.finalize_ideas.options]]
-text = "謝謝你的建議！我們會開始實作了。"
-next = "start_working"  
-
-[dialogue.simplify_discussion]
-scene = "meeting-room"
-character = "ta"
-text = "沒問題，你們可以從基本的好感度系統開始，然後逐步增加更多的功能。"
-[[dialogue.simplify_discussion.options]]
-text = "好的，我們會從基本的開始。"
-next = "finalize_ideas"
-
-[dialogue.time_management]
-scene = "meeting-room"  
-character = "ta"
-text = "合理的時間管理和階段性目標設定對於成功完成專案非常重要。建議你們制定一個時間表。"
-[[dialogue.time_management.options]]
-text = "謝謝提醒，我們會制定計劃的。"
-next = "finalize_ideas"
+[dialogue.read_book]
+scene = "library"
+character = "classmate"
+text = "我們找到了關於專案的一些關鍵資訊，這本書真是太有用了。"
+[[dialogue.read_book.options]]
+text = "繼續努力，完成我們的專案吧！"
+next = "project_start"
+[[dialogue.read_book.options]]
+text = "我們還需要更多資料。"
+next = "find_more_books"
 
 [event.project_start]
 scene = "library"
-dialogue = "start_working"  
+dialogue = "start_working"
 
 [dialogue.start_working]
 scene = "library"
@@ -153,7 +108,7 @@ text = "我們開始工作吧！"
 text = "好，我們先分工合作。"
 next = "work_division"
 [[dialogue.start_working.options]]
-text = "我們先列出所有需要做的事情。"  
+text = "我們先列出所有需要做的事情。"
 next = "task_listing"
 
 [dialogue.work_division]
@@ -162,7 +117,7 @@ character = "classmate"
 text = "你負責劇本，我負責程式。我們兩週後再來討論進度。"
 [[dialogue.work_division.options]]
 text = "好的，沒問題！"
-next = "project_progress_good"  
+next = "project_progress_good"
 [[dialogue.work_division.options]]
 text = "我覺得我們需要更多時間。"
 next = "project_progress_bad"
@@ -174,7 +129,7 @@ text = "我們列出了一個詳細的計劃，並按部就班地完成了所有
 [[dialogue.task_listing.options]]
 text = "太棒了，讓我們開始吧！"
 next = "project_progress_good"
-[[dialogue.task_listing.options]]  
+[[dialogue.task_listing.options]]
 text = "這計劃太複雜了，我們需要簡化一下。"
 next = "project_progress_neutral"
 
@@ -186,7 +141,7 @@ text = "經過兩週的努力,我們的專案進展非常順利,完成了大部�
 text = "太好了,讓我們繼續保持下去!"
 next = "ending_good"
 
-[dialogue.project_progress_bad]  
+[dialogue.project_progress_bad]
 scene = "library"
 character = "classmate"
 text = "兩週過去了,我們的進度有點落後。我們需要加把勁了。"
@@ -195,7 +150,7 @@ text = "我們需要重新調整計劃,爭取按時完成。"
 next = "ending_neutral"
 [[dialogue.project_progress_bad.options]]
 text = "看來我們無法按時完成了。"
-next = "ending_bad"  
+next = "ending_bad"
 
 [dialogue.project_progress_neutral]
 scene = "library"
@@ -206,7 +161,7 @@ text = "讓我們集中精力,完成剩下的部分。"
 next = "ending_neutral"
 
 [dialogue.ending_good]
-scene = "library"  
+scene = "library"
 character = "classmate"
 text = "恭喜！你們成功完成了期末專題，並得到了老師的高度評價。"
 event = "game_over_good"
@@ -219,7 +174,7 @@ event = "game_over_bad"
 
 [dialogue.ending_neutral]
 scene = "library"
-character = "classmate"  
+character = "classmate"
 text = "你們的期末專題最終完成了，但因為時間和資源的限制，只得到了中等評價。"
 event = "game_over_neutral"
 
@@ -229,8 +184,41 @@ result = "good"
 
 [event.game_over_bad]
 action = "end_game"
-result = "bad"  
+result = "bad"
 
 [event.game_over_neutral]
-action = "end_game"  
+action = "end_game"
 result = "neutral"
+
+[dialogue.find_more_books]
+scene = "library"
+character = "classmate"
+text = "我們去找找其他的書，看看能不能找到更多有用的資料。"
+[[dialogue.find_more_books.options]]
+text = "好的，繼續找書。"
+next = "book_search"
+[[dialogue.find_more_books.options]]
+text = "先去會議室討論我們目前的進展吧。"
+next = "ta_intro"
+
+[dialogue.book_search]
+scene = "library"
+character = "librarian"
+text = "這是我能找到的所有相關書籍，希望對你們有幫助。"
+[[dialogue.book_search.options]]
+text = "謝謝，我們會仔細閱讀的。"
+next = "read_more_books"
+[[dialogue.book_search.options]]
+text = "我們需要更多的幫助，先去找助教討論。"
+next = "ta_intro"
+
+[dialogue.read_more_books]
+scene = "library"
+character = "classmate"
+text = "這些書籍提供了很多有用的信息，我們可以開始動手做了。"
+[[dialogue.read_more_books.options]]
+text = "讓我們開始實作吧！"
+next = "project_progress_good"
+[[dialogue.read_more_books.options]]
+text = "先去會議室討論我們目前的進展吧。"
+next = "ta_intro"

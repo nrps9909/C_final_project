@@ -26,6 +26,13 @@ void display_emotion(Player* player) {
     printf("%s 的情感值: %d\n", player->name, player->emotion);
 }
 
+void display_inventory(Player *player) {
+    printf("背包內容:\n");
+    for (int i = 0; i < player->inventory_count; i++) {
+        printf("%d. %s\n", i + 1, player->inventory[i]);
+    }
+}
+
 int find_scene_index(GameData *gameData, const char *scene_name) {
     for (int i = 0; i < 10; i++) {
         fprintf(stderr, "比較場景: %s\n", gameData->scenes[i].name);
@@ -50,8 +57,7 @@ void handle_event(GameData *gameData, Player *player, const char *event_name) {
     for (int i = 0; i < 10; i++) {
         if (strcmp(gameData->events[i].name, event_name) == 0) {
             printf("事件名稱匹配: %s\n", gameData->events[i].name);
-            if (strcmp(gameData->events[i].action, "change_scene") == 0 ||
-                strcmp(gameData->events[i].action, "change_scene_to_meeting_room") == 0) {
+            if (strcmp(gameData->events[i].action, "change_scene") == 0) {
                 printf("事件動作是切換場景\n");
                 int scene_index = find_scene_index(gameData, gameData->events[i].scene);
                 if (scene_index != -1) {
@@ -65,13 +71,25 @@ void handle_event(GameData *gameData, Player *player, const char *event_name) {
                 add_item_to_inventory(player, gameData->events[i].item);
             } else if (strcmp(gameData->events[i].action, "end_game") == 0) {
                 printf("遊戲結束: %s\n", gameData->events[i].result);
+                exit(0); // 或者其他方式結束遊戲
             }
+            // 處理事件後轉到對應的對話
+            if (strlen(gameData->events[i].dialogue) > 0) {
+                int dialogue_index = find_dialogue_index(gameData, gameData->events[i].dialogue);
+                if (dialogue_index != -1) {
+                    printf("更新對話到: %s\n", gameData->events[i].dialogue);
+                    player->current_dialogue = dialogue_index;
+                } else {
+                    printf("找不到對話: %s\n", gameData->events[i].dialogue);
+                }
+            }
+            break; // 找到匹配的事件後退出循環
         }
     }
 }
 
 void play_game(GameData* gameData) {
-    Player player = {"Player", 50, {{0}}, 0, 0}; 
+    Player player = {"Player", 50, {{0}}, 0, 0, 0};  // 添加 0 初始化 current_dialogue
     player.current_scene = find_scene_index(gameData, "library"); 
     if (player.current_scene == -1) {
         printf("找不到初始場景: library\n");
@@ -83,24 +101,32 @@ void play_game(GameData* gameData) {
         fprintf(stderr, "找不到初始對話: hello\n");
         return;
     }
+    player.current_dialogue = dialogue_index;
 
     while (1) {
         fprintf(stderr, "當前場景: %s\n", gameData->scenes[player.current_scene].name);
-        display_scene(gameData, gameData->scenes[player.current_scene].name);
+        display_scene(gameData, gameData->scenes[player.current_scene].name, &player);  // 傳遞 player
         fprintf(stderr, "顯示對話之前\n");
-        display_dialogue(gameData, dialogue_index);
+        display_dialogue(gameData, player.current_dialogue);
         fprintf(stderr, "顯示對話之後\n");
+        display_inventory(&player);  // 顯示背包內容
         int choice = get_user_choice();
         fprintf(stderr, "用戶選擇: %d\n", choice);
+
         if (choice == -1) {
             break;
         }
 
+        if (choice == 0) {  // 如果玩家選擇開啟背包
+            display_inventory_screen(&player);
+            continue;
+        }
+
         DialogueOption selected_option;
         if (choice == 1) {
-            selected_option = gameData->dialogues[dialogue_index].options[0];
+            selected_option = gameData->dialogues[player.current_dialogue].options[0];
         } else if (choice == 2) {
-            selected_option = gameData->dialogues[dialogue_index].options[1];
+            selected_option = gameData->dialogues[player.current_dialogue].options[1];
         } else {
             printf("無效選擇\n");
             continue;
@@ -127,7 +153,7 @@ void play_game(GameData* gameData) {
             int next_dialogue_index = find_dialogue_index(gameData, next_dialogue);
             if (next_dialogue_index != -1) {
                 printf("更新對話到: %s\n", next_dialogue);
-                dialogue_index = next_dialogue_index; 
+                player.current_dialogue = next_dialogue_index; 
                 const char *next_scene = gameData->dialogues[next_dialogue_index].scene;
                 int next_scene_index = find_scene_index(gameData, next_scene);
                 if (next_scene_index != -1) {

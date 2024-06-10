@@ -122,7 +122,7 @@ void render_text(const char* message, int x, int y) {
     SDL_DestroyTexture(texture);
 }
 
-void display_scene(GameData* gameData, const char* scene_name) {
+void display_scene(GameData* gameData, const char* scene_name, Player *player) {
     int scene_index = find_scene_index(gameData, scene_name);
     if (scene_index < 0 || scene_index >= 10) {
         fprintf(stderr, "無效的場景索引: %d\n", scene_index);
@@ -151,12 +151,11 @@ void display_scene(GameData* gameData, const char* scene_name) {
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
     SDL_DestroyTexture(texture);
 
+    // Display characters
     for (int i = 0; i < 10; i++) {
-        fprintf(stderr, "角色 %s 的位置: %s\n", gameData->characters[i].name, gameData->characters[i].location);
         if (strlen(gameData->characters[i].location) > 0 &&
             strcmp(gameData->characters[i].location, gameData->scenes[scene_index].name) == 0) {
             const char* tachie_path = gameData->characters[i].tachie;
-            fprintf(stderr, "嘗試加載角色立繪: %s\n", tachie_path);
             SDL_Surface* tachie = load_image(tachie_path);
             if (!tachie) {
                 fprintf(stderr, "Failed to load image: %s\n", tachie_path);
@@ -175,12 +174,87 @@ void display_scene(GameData* gameData, const char* scene_name) {
             SDL_Rect tachie_rect = { tachie_x, tachie_y, tachie->w, tachie->h };  
             SDL_RenderCopy(renderer, tachie_texture, NULL, &tachie_rect);
             SDL_DestroyTexture(tachie_texture);
-
             SDL_FreeSurface(tachie);  
         }
     }
 
+    // Display items in the scene
+    for (int i = 0; i < 10; i++) {
+        if (strlen(gameData->items[i].icon) > 0) {
+            const char* icon_path = gameData->items[i].icon;
+            SDL_Surface* icon = load_image(icon_path);
+            if (!icon) {
+                fprintf(stderr, "Failed to load image: %s\n", icon_path);
+                continue;
+            }
+
+            SDL_Texture* icon_texture = SDL_CreateTextureFromSurface(renderer, icon);
+            if (!icon_texture) {
+                fprintf(stderr, "Unable to create texture from %s! SDL_Error: %s\n", icon_path, SDL_GetError());
+                SDL_FreeSurface(icon);
+                continue;
+            }
+
+            int icon_x = (int)(window_width * 0.1) * (i + 1);
+            int icon_y = (int)(window_height * 0.8);
+            SDL_Rect icon_rect = { icon_x, icon_y, icon->w, icon->h };  
+            SDL_RenderCopy(renderer, icon_texture, NULL, &icon_rect);
+            SDL_DestroyTexture(icon_texture);
+            SDL_FreeSurface(icon);  
+        }
+    }
+
     SDL_RenderPresent(renderer);
+
+    // Display inventory on the screen
+    int text_x = window_width * 0.8;
+    int text_y = window_height * 0.1;
+    render_text("背包:", text_x, text_y);
+    text_y += 30;
+    for (int i = 0; i < player->inventory_count; i++) {
+        render_text(player->inventory[i], text_x, text_y + i * 30);
+    }
+    SDL_RenderPresent(renderer);
+}
+
+void display_inventory_screen(Player *player) {
+    SDL_GetWindowSize(window, &window_width, &window_height);
+    SDL_RenderClear(renderer);
+
+    // Render inventory background
+    SDL_Rect bgRect = {0, 0, window_width, window_height};
+    SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+    SDL_RenderFillRect(renderer, &bgRect);
+
+    // Render inventory title
+    render_text("背包", window_width / 2 - 50, 50);
+
+    // Render each inventory item
+    int text_x = 100;
+    int text_y = 150;
+    for (int i = 0; i < player->inventory_count; i++) {
+        render_text(player->inventory[i], text_x, text_y + i * 30);
+    }
+
+    // Render exit instruction
+    render_text("按ESC退出背包", text_x, text_y + player->inventory_count * 30 + 50);
+    SDL_RenderPresent(renderer);
+
+    // Wait for user to exit inventory
+    SDL_Event e;
+    while (1) {
+        while (SDL_PollEvent(&e) != 0) {
+            if (e.type == SDL_QUIT) {
+                cleanup_ui();
+                exit(0);
+            } else if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.sym == SDLK_ESCAPE) {
+                    return;
+                }
+            }
+        }
+        SDL_Delay(100);
+    }
 }
 
 void display_dialogue(GameData* gameData, int dialogue_index) {
@@ -193,8 +267,6 @@ void display_dialogue(GameData* gameData, int dialogue_index) {
         fprintf(stderr, "無效的 dialogue_index: %d\n", dialogue_index);
         return;
     }
-
-    fprintf(stderr, "顯示對話: %s\n", gameData->dialogues[dialogue_index].text);
 
     SDL_GetWindowSize(window, &window_width, &window_height);
     SDL_Rect dialogueRect = {window_width / 4, window_height - 300, 800, 200};
@@ -233,6 +305,8 @@ int get_user_choice() {
                         return 1;
                     case SDLK_2:
                         return 2;
+                    case SDLK_i:  // 使用 i 鍵打開背包
+                        return 0;
                     case SDLK_ESCAPE:  
                         cleanup_ui();
                         exit(0);
