@@ -180,7 +180,8 @@ void display_scene(GameData* gameData, const char* scene_name, Player *player) {
 
     // Display items in the scene
     for (int i = 0; i < 10; i++) {
-        if (strlen(gameData->items[i].icon) > 0) {
+        if (strlen(gameData->items[i].name) > 0 &&
+            strcmp(gameData->items[i].scene, gameData->scenes[scene_index].name) == 0) {
             const char* icon_path = gameData->items[i].icon;
             SDL_Surface* icon = load_image(icon_path);
             if (!icon) {
@@ -217,7 +218,7 @@ void display_scene(GameData* gameData, const char* scene_name, Player *player) {
     SDL_RenderPresent(renderer);
 }
 
-void display_inventory_screen(Player *player) {
+void display_inventory_screen(GameData* gameData, Player *player) {
     SDL_GetWindowSize(window, &window_width, &window_height);
     SDL_RenderClear(renderer);
 
@@ -233,7 +234,24 @@ void display_inventory_screen(Player *player) {
     int text_x = 100;
     int text_y = 150;
     for (int i = 0; i < player->inventory_count; i++) {
-        render_text(player->inventory[i], text_x, text_y + i * 30);
+        // Render item icon
+        int item_index = find_item_index(gameData, player->inventory[i]);
+        if (item_index != -1) {
+            const char* icon_path = gameData->items[item_index].icon;
+            SDL_Surface* icon = load_image(icon_path);
+            if (icon) {
+                SDL_Texture* icon_texture = SDL_CreateTextureFromSurface(renderer, icon);
+                if (icon_texture) {
+                    SDL_Rect icon_rect = { text_x, text_y + i * 50, icon->w, icon->h };  
+                    SDL_RenderCopy(renderer, icon_texture, NULL, &icon_rect);
+                    SDL_DestroyTexture(icon_texture);
+                }
+                SDL_FreeSurface(icon);
+            }
+        }
+
+        // Render item name
+        render_text(player->inventory[i], text_x + 50, text_y + i * 50);
     }
 
     // Render exit instruction

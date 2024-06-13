@@ -1,71 +1,98 @@
 #ifndef GAME_ENGINE_H
 #define GAME_ENGINE_H
 
+// 定義常量
+#define MAX_INVENTORY_SIZE 10
+#define MAX_ITEM_NAME_LENGTH 50
+#define MAX_CHARACTERS 10
+#define MAX_DIALOGUE_OPTIONS 2
+#define MAX_SCENES 10
+#define MAX_ITEMS 10
+#define MAX_DIALOGUES 30
+#define MAX_EVENTS 40
+
+// 定義玩家結構體
 typedef struct {
-    char name[50];
-    int emotion;
-    char inventory[10][50];
-    int inventory_count;
-    int current_scene;
-    int current_dialogue;  // 添加 current_dialogue 成員
+    char name[MAX_ITEM_NAME_LENGTH]; // 玩家名稱
+    int emotion; // 玩家情緒值
+    char inventory[MAX_INVENTORY_SIZE][MAX_ITEM_NAME_LENGTH]; // 玩家物品清單
+    int inventory_count; // 玩家物品數量
+    int current_scene; // 當前場景
+    int current_dialogue; // 當前對話
 } Player;
 
+// 定義場景結構體
 typedef struct {
-    char name[50];
-    char background[100];
+    char name[50]; // 場景名稱
+    char background[100]; // 場景背景
 } Scene;
 
+// 定義角色結構體
 typedef struct {
-    char name[50];
-    char avatar[100];
-    char tachie[100];
-    char location[50];
+    char name[50]; // 角色名稱
+    char avatar[100]; // 角色頭像
+    char tachie[100]; // 角色立繪
+    char location[50]; // 角色位置
+    int heart; // 角色好感度
 } Character;
 
+// 定義物品結構體
 typedef struct {
-    char name[50];
-    char description[200];
-    char icon[100];
+    char name[50]; // 物品名稱
+    char description[200]; // 物品描述
+    char icon[100]; // 物品圖標
+    char scene[50]; // 物品所屬場景
 } Item;
 
+// 定義對話選項結構體
 typedef struct {
-    char text[200];
-    char next[50];
-    char event[50];
+    char text[200]; // 對話選項文本
+    char next[50]; // 下一個對話名稱
+    char event[50]; // 觸發事件
 } DialogueOption;
 
+// 定義對話結構體
 typedef struct {
-    char name[50];
-    char scene[50];
-    char character[50];
-    char text[200];
-    DialogueOption options[2];
+    char name[50]; // 對話名稱
+    char scene[50]; // 對話所屬場景
+    char character[50]; // 參與對話的角色
+    char text[200]; // 對話文本
+    DialogueOption options[MAX_DIALOGUE_OPTIONS]; // 對話選項
 } Dialogue;
 
+// 定義事件結構體
 typedef struct {
-    char name[50];
-    char scene[50];
-    char dialogue[50];
-    char action[50];
-    char result[50];
-    char item[50];
+    char name[50]; // 事件名稱
+    char scene[50]; // 事件所屬場景
+    char dialogue[50]; // 事件所屬對話
+    char action[50]; // 事件動作
+    char result[50]; // 事件結果
+    char item[50]; // 事件物品
+    char character[50]; // 事件角色
+    int amount; // 事件影響的數量
 } Event;
 
+// 定義遊戲資料結構體
 typedef struct {
-    Scene scenes[10];
-    Character characters[10];
-    Item items[10];
-    Dialogue dialogues[20];
-    Event events[10];
+    Scene scenes[MAX_SCENES]; // 所有場景
+    Character characters[MAX_CHARACTERS]; // 所有角色
+    Item items[MAX_ITEMS]; // 所有物品
+    Dialogue dialogues[MAX_DIALOGUES]; // 所有對話
+    Event events[MAX_EVENTS]; // 所有事件
 } GameData;
 
-void play_game(GameData* gameData);
-void handle_event(GameData *gameData, Player *player, const char *event_name);
-int find_scene_index(GameData *gameData, const char *scene_name);
-int find_dialogue_index(GameData *gameData, const char *dialogue_name);
-void add_item_to_inventory(Player *player, const char *item);
-void update_emotion(Player *player, int change);
-void display_emotion(Player* player);
-void display_inventory(Player *player);
+// 函式原型
+void play_game(GameData *gameData); // 遊戲主函式
+void handle_event(GameData *gameData, Player *player, const char *event_name); // 處理事件
+int find_scene_index(GameData *gameData, const char *scene_name); // 找到場景索引
+int find_dialogue_index(GameData *gameData, const char *dialogue_name); // 找到對話索引
+int find_item_index(GameData *gameData, const char *item_name); // 找到物品索引
+int find_character_index(GameData *gameData, const char *character_name); // 找到角色索引
+void add_item_to_inventory(Player *player, Item *item); // 將物品加入玩家物品欄
+void update_emotion(Player *player, int change); // 更新玩家情緒
+void display_emotion(Player *player); // 顯示玩家情緒
+void display_inventory(Player *player); // 顯示玩家物品欄
+void update_character_heart(GameData *gameData, const char *character_name, int amount); // 更新角色好感度
+void display_character_hearts(GameData *gameData); // 顯示角色好感度
 
 #endif // GAME_ENGINE_H

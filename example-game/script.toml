@@ -28,12 +28,12 @@ avatar = "example-game/assets/character/librarian/avatar.bmp"
 tachie = "example-game/assets/character/librarian/tachie.bmp"
 
 [item.vision-pro]
-name = "Vision Pro"
+name = "vision Pro"
 description = "A spatial computer"
 icon = "example-game/assets/item/vision-pro/icon.bmp"
 
 [item.book]  
-name = "Old Book"
+name = "book"
 description = "A mysterious old book"
 icon = "example-game/assets/item/book/icon.bmp"
 
@@ -48,6 +48,7 @@ text = "嗨！聽說今年的期末專題要做互動式小說引擎喔～"
 [[dialogue.hello.options]]
 text = "哇！太棒了！"
 next = "find_book"
+event = "start"
 [[dialogue.hello.options]]
 text = "那是啥鬼？"
 next = "explanation"
@@ -68,6 +69,9 @@ scene = "library"
 character = "librarian"
 text = "你好！這是你需要的那本書。"
 event = "acquire_book"
+[[dialogue.find_book.options]]
+text = "謝謝,我會好好利用這本書的。"
+next = "book_acquired"
 
 [event.acquire_book]
 action = "add_item"
@@ -199,7 +203,7 @@ text = "好的，繼續找書。"
 next = "book_search"
 [[dialogue.find_more_books.options]]
 text = "先去會議室討論我們目前的進展吧。"
-next = "ta_intro"
+next = "project_progress_neutral"
 
 [dialogue.book_search]
 scene = "library"
@@ -210,7 +214,7 @@ text = "謝謝，我們會仔細閱讀的。"
 next = "read_more_books"
 [[dialogue.book_search.options]]
 text = "我們需要更多的幫助，先去找助教討論。"
-next = "ta_intro"
+next = "project_progress_neutral"
 
 [dialogue.read_more_books]
 scene = "library"
@@ -221,4 +225,15 @@ text = "讓我們開始實作吧！"
 next = "project_progress_good"
 [[dialogue.read_more_books.options]]
 text = "先去會議室討論我們目前的進展吧。"
-next = "ta_intro"
+next = "project_progress_neutral"
+
+[dialogue.ta_intro]
+scene = "meeting-room"
+character = "ta"
+text = "嗨,我是你們這個專案的助教。有什麼我可以幫助你們的嗎?"
+[[dialogue.ta_intro.options]]
+text = "我們在尋找一些參考資料,你有什麼建議嗎?"
+next = "project_progress_neutral"
+[[dialogue.ta_intro.options]]
+text = "我們目前進展順利,謝謝你的關心。"
+next = "project_progress_good"

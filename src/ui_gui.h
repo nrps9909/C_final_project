@@ -9,6 +9,6 @@ void display_scene(GameData *gameData, const char* scene_name, Player *player);
 void display_dialogue(GameData* gameData, int dialogue_index);
 int get_user_choice();
 void display_inventory(Player *player);
-void display_inventory_screen(Player *player);
+void display_inventory_screen(GameData *gameData, Player *player); // 修改函數原型以包含 gameData
 
 #endif // UI_GUI_H
