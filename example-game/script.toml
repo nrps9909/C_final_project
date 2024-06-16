@@ -70,7 +70,7 @@ tachie = "example-game/assets/character/eunice/tachie.png"
 name = "Lucy"
 avatar = "example-game/assets/character/lucy/avatar.bmp"
 tachie = "example-game/assets/character/lucy/tachie.png"
-location = "school-bus"
+location = "school-gate"
 
 [character.pony]
 name = "Lucy /w ponytail"
