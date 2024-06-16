@@ -55,6 +55,11 @@ name = "校門口"
 background = "example-game/assets/scene/school-gate.bmp"
 
 # 角色設定
+[character.pattyanna]
+name = "Patty&Anna"
+avatar = "example-game/assets/character/anna/avatar.bmp"
+tachie = "example-game/assets/character/anna&patty/tachie.png"
+
 [character.anna]
 name = "Anna"
 avatar = "example-game/assets/character/anna/avatar.bmp"
@@ -75,10 +80,6 @@ location = "school-gate"
 name = "Lucy"
 avatar = "example-game/assets/character/lucy/avatar.bmp"
 tachie = "example-game/assets/character/lucy/tachie.png"
-
-[character.pony]
-name = "Lucy /w ponytail"
-tachie = "example-game/assets/character/pony/tachie.png"
 
 [character.jamie]
 name = "Jamie"
@@ -312,11 +313,21 @@ event = "change_scene_to_staircase"
 scene = "staircase"
 character = "Patty&Anna"
 text1 = "當天放學，在下樓梯的時候，整好遇到Anna還有Patty兩人，他們突然問你:"
-text2 = "Patty/Anna:\"如果Anna/Patty跟你告白，你會接受嗎？"
+text2 = "Patty:\"如果Anna跟你告白，你會接受嗎？"
+text3 = "Anna:\"那如果Patty跟你告白，你會接受嗎!"
 [[dialogue.staircase_encounter.options]]
 text = "一切來的好突然...我先閃一下好了..."
-next = "training_camp_start"
+next = "go_to_training_camp"
 event = "change_scene_to_training_camp"
+
+[dialogue.go_to_training_camp]
+scene = "training-camp"
+character = " "
+text1 = "來運動散心一下好了"
+[[dialogue.go_to_training_camp.options]]
+text = "沒想到你這時卻遇到..."
+next = "training_camp_start"
+event = ""
 
 # Lucy劇情
 [dialogue.training_camp_start]
@@ -412,7 +423,7 @@ event = "increase_heart_lucy_extra"
 
 [dialogue.pony_tail_response]
 scene = "school-gate"
-character = "Lucy"
+character = "Pony"
 text1 = "\"好啊，那我明天繼續綁馬尾來學校\""
 text2 = "Lucy笑得很開心"
 [[dialogue.pony_tail_response.options]]

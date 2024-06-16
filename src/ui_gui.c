@@ -212,42 +212,10 @@ void display_scene(GameData *gameData, const char *scene_name, Player *player)
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
     SDL_DestroyTexture(texture);
 
-    // Display characters
-    for (int i = 0; i < MAX_CHARACTERS; i++)
-    {
-        if (strlen(gameData->characters[i].location) > 0 &&
-            strcmp(gameData->characters[i].location, gameData->scenes[scene_index].name) == 0)
-        {
-            const char *tachie_path = gameData->characters[i].tachie;
-            SDL_Surface *tachie = load_image(tachie_path);
-            if (!tachie)
-            {
-                fprintf(stderr, "Failed to load image: %s\n", tachie_path);
-                continue;
-            }
-
-            SDL_Texture *tachie_texture = SDL_CreateTextureFromSurface(renderer, tachie);
-            if (!tachie_texture)
-            {
-                fprintf(stderr, "Unable to create texture from %s! SDL_Error: %s\n", tachie_path, SDL_GetError());
-                SDL_FreeSurface(tachie);
-                continue;
-            }
-
-            int tachie_x = (int)(window_width * 0.75);
-            int tachie_y = (int)(window_height * 0.1);
-            SDL_Rect tachie_rect = {tachie_x, tachie_y, tachie->w, tachie->h};
-            SDL_RenderCopy(renderer, tachie_texture, NULL, &tachie_rect);
-            SDL_DestroyTexture(tachie_texture);
-            SDL_FreeSurface(tachie);
-        }
-    }
-
     // Display items in the scene
     for (int i = 0; i < MAX_ITEMS; i++)
     {
-        if (strlen(gameData->items[i].name) > 0 &&
-            strcmp(gameData->items[i].scene, gameData->scenes[scene_index].name) == 0)
+        if (strlen(gameData->items[i].name) > 0 && strcmp(gameData->items[i].scene, gameData->scenes[scene_index].name) == 0)
         {
             const char *icon_path = gameData->items[i].icon;
             SDL_Surface *icon = load_image(icon_path);
@@ -274,50 +242,6 @@ void display_scene(GameData *gameData, const char *scene_name, Player *player)
         }
     }
 
-    // Display character avatars, names, and hearts in the top right corner
-    int avatar_x = window_width * 0.8;
-    int avatar_y = 0;
-    for (int i = 0; i < MAX_CHARACTERS; i++)
-    {
-        if (strlen(gameData->characters[i].name) > 0)
-        {
-            // Load and render avatar
-            SDL_Surface *avatar = load_image(gameData->characters[i].avatar);
-            if (avatar)
-            {
-                SDL_Texture *avatar_texture = SDL_CreateTextureFromSurface(renderer, avatar);
-                if (avatar_texture)
-                {
-                    SDL_Rect avatar_rect = {avatar_x, avatar_y, avatar->w, avatar->h};
-                    SDL_RenderCopy(renderer, avatar_texture, NULL, &avatar_rect);
-                    SDL_DestroyTexture(avatar_texture);
-                }
-                SDL_FreeSurface(avatar);
-            }
-
-            // Render character name
-            render_text(gameData->characters[i].name, avatar_x, avatar_y + 100);
-
-            // Render character heart
-            char heart_text[50];
-            snprintf(heart_text, sizeof(heart_text), "好感度: %d", gameData->characters[i].heart);
-            render_text(heart_text, avatar_x, avatar_y + 130);
-
-            avatar_y += 150;
-        }
-    }
-
-    SDL_RenderPresent(renderer);
-
-    // Display inventory on the screen
-    int text_x = window_width * 0.8;
-    int text_y = window_height * 0.1;
-    render_text("背包:", text_x, text_y);
-    text_y += 30;
-    for (int i = 0; i < player->inventory_count; i++)
-    {
-        render_text(player->inventory[i], text_x, text_y + i * 30);
-    }
     SDL_RenderPresent(renderer);
 }
 
@@ -419,7 +343,7 @@ void display_dialogue(GameData *gameData, int dialogue_index)
     SDL_GetWindowSize(window, &window_width, &window_height);
 
     // Make the dialogue box bigger and move it more to the right
-    SDL_Rect dialogueRect = {window_width / 4, window_height - 350, 1200, 250};
+    SDL_Rect dialogueRect = {window_width / 10, window_height - 350, 1200, 250};
 
     // Check if dialogue box texture is available
     if (dialogue_box_texture)
@@ -429,9 +353,9 @@ void display_dialogue(GameData *gameData, int dialogue_index)
     else
     {
         // If no texture is available, fill the rectangle with a solid color
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 128); // White color
         SDL_RenderFillRect(renderer, &dialogueRect);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Reset to default draw color (black)
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128); // Reset to default draw color (black)
         SDL_RenderDrawRect(renderer, &dialogueRect);    // Draw the border
     }
 
@@ -442,6 +366,27 @@ void display_dialogue(GameData *gameData, int dialogue_index)
     // Render character name
     render_text(gameData->dialogues[dialogue_index].character, text_x, text_y);
     text_y += 62; // Adjust Y coordinate to avoid overlap with character name
+
+    // Render character tachie (standing picture)
+    int char_index = find_character_index(gameData, gameData->dialogues[dialogue_index].character);
+    if (char_index != -1)
+    {
+        const char *tachie_path = gameData->characters[char_index].tachie;
+        SDL_Surface *tachie = load_image(tachie_path);
+        if (tachie)
+        {
+            SDL_Texture *tachie_texture = SDL_CreateTextureFromSurface(renderer, tachie);
+            if (tachie_texture)
+            {
+                int tachie_x = (int)(window_width * 0.75);
+                int tachie_y = (int)(window_height * 0.1);
+                SDL_Rect tachie_rect = {tachie_x, tachie_y, tachie->w, tachie->h};
+                SDL_RenderCopy(renderer, tachie_texture, NULL, &tachie_rect);
+                SDL_DestroyTexture(tachie_texture);
+            }
+            SDL_FreeSurface(tachie);
+        }
+    }
 
     switch (dialogue_state)
     {
@@ -516,7 +461,7 @@ int get_user_choice()
             {
                 if (e.button.button == SDL_BUTTON_LEFT && dialogue_state == OPTIONS)
                 {
-                    int text_x = window_width / 4 + 100;
+                    int text_x = window_width / 10 + 100;
                     int text_y = window_height - 350 + 90; // Increased Y coordinate for better alignment
 
                     for (int i = 0; i < MAX_DIALOGUE_OPTIONS; i++)
