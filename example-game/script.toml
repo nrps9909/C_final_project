@@ -201,7 +201,7 @@ text1 = "到了校車上，你發現你座位旁邊多了一個新的學妹"
 text2 = "嗨！我是Anna，我剛轉來這裡，很高興認識你！"
 [[dialogue.bus_introduction2.options]]
 text = "很高興認識你，Anna！"
-next = "anna_story"
+next = "classroom_introduction"
 event = "change_scene_to_classroom"
 
 [dialogue.classroom_introduction]

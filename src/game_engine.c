@@ -150,7 +150,7 @@ void handle_event(GameData *gameData, Player *player, const char *event_name) {
 
 void play_game(GameData* gameData) {
     Player player = {"Player", 50, {{0}}, 0, 0, 0};
-    player.current_scene = find_scene_index(gameData, "school-bus");
+    player.current_scene = find_scene_index(gameData, "school-gate");
     if (player.current_scene == -1) {
         fprintf(stderr, "找不到初始場景: school-bus\n");
         return;
