@@ -374,23 +374,15 @@ void display_dialogue(GameData* gameData, int dialogue_index) {
     switch (dialogue_state) {
         case TEXT1:
             render_text(gameData->dialogues[dialogue_index].text1, text_x, text_y);
-            dialogue_state = TEXT2;
+            dialogue_state = (gameData->dialogues[dialogue_index].text2[0] != '\0') ? TEXT2 : OPTIONS;
             break;
         case TEXT2:
-            if (strlen(gameData->dialogues[dialogue_index].text2) > 0) {
-                render_text(gameData->dialogues[dialogue_index].text2, text_x, text_y);
-                dialogue_state = TEXT3;
-            } else {
-                dialogue_state = OPTIONS;
-            }
+            render_text(gameData->dialogues[dialogue_index].text2, text_x, text_y);
+            dialogue_state = (gameData->dialogues[dialogue_index].text3[0] != '\0') ? TEXT3 : OPTIONS;
             break;
         case TEXT3:
-            if (strlen(gameData->dialogues[dialogue_index].text3) > 0) {
-                render_text(gameData->dialogues[dialogue_index].text3, text_x, text_y);
-                dialogue_state = OPTIONS;
-            } else {
-                dialogue_state = OPTIONS;
-            }
+            render_text(gameData->dialogues[dialogue_index].text3, text_x, text_y);
+            dialogue_state = OPTIONS;
             break;
         case OPTIONS:
             for (int i = 0; i < MAX_DIALOGUE_OPTIONS; i++) {
@@ -429,19 +421,11 @@ int get_user_choice() {
                 }
             } else if (e.type == SDL_MOUSEBUTTONDOWN) {
                 if (dialogue_state == TEXT1) {
-                    dialogue_state = TEXT2;
+                    dialogue_state = (current_game_data->dialogues[current_dialogue_index].text2[0] != '\0') ? TEXT2 : OPTIONS;
                 } else if (dialogue_state == TEXT2) {
-                    if (strlen(current_game_data->dialogues[current_dialogue_index].text2) > 0) {
-                        dialogue_state = TEXT3;
-                    } else {
-                        dialogue_state = OPTIONS;
-                    }
+                    dialogue_state = (current_game_data->dialogues[current_dialogue_index].text3[0] != '\0') ? TEXT3 : OPTIONS;
                 } else if (dialogue_state == TEXT3) {
-                    if (strlen(current_game_data->dialogues[current_dialogue_index].text3) > 0) {
-                        dialogue_state = OPTIONS;
-                    } else {
-                        dialogue_state = OPTIONS;
-                    }
+                    dialogue_state = OPTIONS;
                 }
                 display_dialogue(current_game_data, current_dialogue_index);
             }
