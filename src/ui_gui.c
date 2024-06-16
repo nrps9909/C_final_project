@@ -374,15 +374,12 @@ void display_dialogue(GameData* gameData, int dialogue_index) {
     switch (dialogue_state) {
         case TEXT1:
             render_text(gameData->dialogues[dialogue_index].text1, text_x, text_y);
-            dialogue_state = (gameData->dialogues[dialogue_index].text2[0] != '\0') ? TEXT2 : OPTIONS;
             break;
         case TEXT2:
             render_text(gameData->dialogues[dialogue_index].text2, text_x, text_y);
-            dialogue_state = (gameData->dialogues[dialogue_index].text3[0] != '\0') ? TEXT3 : OPTIONS;
             break;
         case TEXT3:
             render_text(gameData->dialogues[dialogue_index].text3, text_x, text_y);
-            dialogue_state = OPTIONS;
             break;
         case OPTIONS:
             for (int i = 0; i < MAX_DIALOGUE_OPTIONS; i++) {
@@ -421,11 +418,21 @@ int get_user_choice() {
                 }
             } else if (e.type == SDL_MOUSEBUTTONDOWN) {
                 if (dialogue_state == TEXT1) {
-                    dialogue_state = (current_game_data->dialogues[current_dialogue_index].text2[0] != '\0') ? TEXT2 : OPTIONS;
+                    if (strlen(current_game_data->dialogues[current_dialogue_index].text2) > 0) {
+                        dialogue_state = TEXT2;
+                    } else {
+                        dialogue_state = OPTIONS;
+                    }
                 } else if (dialogue_state == TEXT2) {
-                    dialogue_state = (current_game_data->dialogues[current_dialogue_index].text3[0] != '\0') ? TEXT3 : OPTIONS;
+                    if (strlen(current_game_data->dialogues[current_dialogue_index].text3) > 0) {
+                        dialogue_state = TEXT3;
+                    } else {
+                        dialogue_state = OPTIONS;
+                    }
                 } else if (dialogue_state == TEXT3) {
                     dialogue_state = OPTIONS;
+                } else if (dialogue_state == OPTIONS) {
+                    return -1; // 當點擊選項時退出循環
                 }
                 display_dialogue(current_game_data, current_dialogue_index);
             }
