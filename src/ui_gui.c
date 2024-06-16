@@ -15,14 +15,27 @@ static SDL_Texture* dialogue_box_texture = NULL;
 static int window_width = 1920;
 static int window_height = 1080;
 
+typedef enum {
+    TEXT1,
+    TEXT2,
+    TEXT3,
+    OPTIONS
+} DialogueState;
+
+static DialogueState dialogue_state = TEXT1;
+static int current_dialogue_index = 0;
+static GameData* current_game_data = NULL;
+
 void init_ui() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+        SDL_Quit();
         exit(1);
     }
 
     if (TTF_Init() == -1) {
         fprintf(stderr, "TTF_Init: %s\n", TTF_GetError());
+        SDL_Quit();
         exit(1);
     }
 
@@ -30,12 +43,16 @@ void init_ui() {
     font = TTF_OpenFont(font_path, 24);
     if (!font) {
         fprintf(stderr, "Failed to load font! TTF_Error: %s\n", TTF_GetError());
+        TTF_Quit();
+        SDL_Quit();
         exit(1);
     }
 
     int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
     if (!(IMG_Init(imgFlags) & imgFlags)) {
         fprintf(stderr, "SDL_image could not initialize! IMG_Error: %s\n", IMG_GetError());
+        TTF_Quit();
+        SDL_Quit();
         exit(1);
     }
 
@@ -44,12 +61,19 @@ void init_ui() {
                               window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
     if (!window) {
         fprintf(stderr, "Window could not be created! SDL_Error: %s\n", SDL_GetError());
+        IMG_Quit();
+        TTF_Quit();
+        SDL_Quit();
         exit(1);
     }
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) {
         fprintf(stderr, "Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
+        SDL_DestroyWindow(window);
+        IMG_Quit();
+        TTF_Quit();
+        SDL_Quit();
         exit(1);
     }
 
@@ -57,7 +81,12 @@ void init_ui() {
 
     SDL_Surface* dialogue_box_surface = IMG_Load("third-party/Picture/text_rect.png");
     if (!dialogue_box_surface) {
-        fprintf(stderr, "Unable to load image %s! SDL_image Error: %s\n", "path/to/your/dialogue_box_image.png", IMG_GetError());
+        fprintf(stderr, "Unable to load image %s! SDL_image Error: %s\n", "third-party/Picture/text_rect.png", IMG_GetError());
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        IMG_Quit();
+        TTF_Quit();
+        SDL_Quit();
         exit(1);
     }
     dialogue_box_texture = SDL_CreateTextureFromSurface(renderer, dialogue_box_surface);
@@ -123,8 +152,13 @@ void render_text(const char* message, int x, int y) {
 }
 
 void display_scene(GameData* gameData, const char* scene_name, Player *player) {
+    if (!gameData) {
+        fprintf(stderr, "gameData 為空指針\n");
+        return;
+    }
+
     int scene_index = find_scene_index(gameData, scene_name);
-    if (scene_index < 0 || scene_index >= 10) {
+    if (scene_index < 0 || scene_index >= MAX_SCENES) {
         fprintf(stderr, "無效的場景索引: %d\n", scene_index);
         return;
     }
@@ -152,7 +186,7 @@ void display_scene(GameData* gameData, const char* scene_name, Player *player) {
     SDL_DestroyTexture(texture);
 
     // Display characters
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < MAX_CHARACTERS; i++) {
         if (strlen(gameData->characters[i].location) > 0 &&
             strcmp(gameData->characters[i].location, gameData->scenes[scene_index].name) == 0) {
             const char* tachie_path = gameData->characters[i].tachie;
@@ -179,7 +213,7 @@ void display_scene(GameData* gameData, const char* scene_name, Player *player) {
     }
 
     // Display items in the scene
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < MAX_ITEMS; i++) {
         if (strlen(gameData->items[i].name) > 0 &&
             strcmp(gameData->items[i].scene, gameData->scenes[scene_index].name) == 0) {
             const char* icon_path = gameData->items[i].icon;
@@ -205,6 +239,35 @@ void display_scene(GameData* gameData, const char* scene_name, Player *player) {
         }
     }
 
+    // Display character avatars, names, and hearts in the top right corner
+    int avatar_x = window_width * 0.8;
+    int avatar_y = 0;
+    for (int i = 0; i < MAX_CHARACTERS; i++) {
+        if (strlen(gameData->characters[i].name) > 0) {
+            // Load and render avatar
+            SDL_Surface* avatar = load_image(gameData->characters[i].avatar);
+            if (avatar) {
+                SDL_Texture* avatar_texture = SDL_CreateTextureFromSurface(renderer, avatar);
+                if (avatar_texture) {
+                    SDL_Rect avatar_rect = { avatar_x, avatar_y, avatar->w, avatar->h };
+                    SDL_RenderCopy(renderer, avatar_texture, NULL, &avatar_rect);
+                    SDL_DestroyTexture(avatar_texture);
+                }
+                SDL_FreeSurface(avatar);
+            }
+
+            // Render character name
+            render_text(gameData->characters[i].name, avatar_x, avatar_y + 100);
+
+            // Render character heart
+            char heart_text[50];
+            snprintf(heart_text, sizeof(heart_text), "好感度: %d", gameData->characters[i].heart);
+            render_text(heart_text, avatar_x, avatar_y + 130);
+
+            avatar_y += 150;
+        }
+    }
+
     SDL_RenderPresent(renderer);
 
     // Display inventory on the screen
@@ -219,6 +282,10 @@ void display_scene(GameData* gameData, const char* scene_name, Player *player) {
 }
 
 void display_inventory_screen(GameData* gameData, Player *player) {
+    if (!gameData) {
+        fprintf(stderr, "gameData 為空指針\n");
+        return;
+    }
     SDL_GetWindowSize(window, &window_width, &window_height);
     SDL_RenderClear(renderer);
 
@@ -275,13 +342,20 @@ void display_inventory_screen(GameData* gameData, Player *player) {
     }
 }
 
+void start_dialogue(GameData* gameData, int dialogue_index) {
+    current_game_data = gameData;
+    current_dialogue_index = dialogue_index;
+    dialogue_state = TEXT1;
+    display_dialogue(gameData, dialogue_index);
+}
+
 void display_dialogue(GameData* gameData, int dialogue_index) {
     if (!gameData) {
         fprintf(stderr, "gameData 為空指針\n");
         return;
     }
 
-    if (dialogue_index < 0 || dialogue_index >= 20) { 
+    if (dialogue_index < 0 || dialogue_index >= MAX_DIALOGUES) { 
         fprintf(stderr, "無效的 dialogue_index: %d\n", dialogue_index);
         return;
     }
@@ -292,19 +366,41 @@ void display_dialogue(GameData* gameData, int dialogue_index) {
 
     int text_x = dialogueRect.x + 18;
     int text_y = dialogueRect.y + 18;
-    render_text(gameData->dialogues[dialogue_index].character, text_x, text_y); 
-    text_x += 20;
-    text_y += 50;  
-    render_text(gameData->dialogues[dialogue_index].text, text_x, text_y);
 
-    text_x += 30;
-    text_y += 50;  
-    for (int i = 0; i < 2; i++) {
-        if (strlen(gameData->dialogues[dialogue_index].options[i].text) > 0) {
-            char option_text[256];
-            snprintf(option_text, sizeof(option_text), "%d. %s", i + 1, gameData->dialogues[dialogue_index].options[i].text);
-            render_text(option_text, text_x, text_y + i * 30);
-        }
+    // 渲染角色名字
+    render_text(gameData->dialogues[dialogue_index].character, text_x, text_y);
+    text_y += 40;  // 調整 Y 坐標，以避免與角色名字重疊
+
+    switch (dialogue_state) {
+        case TEXT1:
+            render_text(gameData->dialogues[dialogue_index].text1, text_x, text_y);
+            dialogue_state = TEXT2;
+            break;
+        case TEXT2:
+            if (strlen(gameData->dialogues[dialogue_index].text2) > 0) {
+                render_text(gameData->dialogues[dialogue_index].text2, text_x, text_y);
+                dialogue_state = TEXT3;
+            } else {
+                dialogue_state = OPTIONS;
+            }
+            break;
+        case TEXT3:
+            if (strlen(gameData->dialogues[dialogue_index].text3) > 0) {
+                render_text(gameData->dialogues[dialogue_index].text3, text_x, text_y);
+                dialogue_state = OPTIONS;
+            } else {
+                dialogue_state = OPTIONS;
+            }
+            break;
+        case OPTIONS:
+            for (int i = 0; i < MAX_DIALOGUE_OPTIONS; i++) {
+                if (strlen(gameData->dialogues[dialogue_index].options[i].text) > 0) {
+                    char option_text[256];
+                    snprintf(option_text, sizeof(option_text), "%d. %s", i + 1, gameData->dialogues[dialogue_index].options[i].text);
+                    render_text(option_text, text_x, text_y + i * 30);
+                }
+            }
+            break;
     }
 
     SDL_RenderPresent(renderer);
@@ -325,12 +421,29 @@ int get_user_choice() {
                         return 2;
                     case SDLK_i:  // 使用 i 鍵打開背包
                         return 0;
-                    case SDLK_ESCAPE:  
+                    case SDLK_ESCAPE:
                         cleanup_ui();
                         exit(0);
                     default:
                         break;
                 }
+            } else if (e.type == SDL_MOUSEBUTTONDOWN) {
+                if (dialogue_state == TEXT1) {
+                    dialogue_state = TEXT2;
+                } else if (dialogue_state == TEXT2) {
+                    if (strlen(current_game_data->dialogues[current_dialogue_index].text2) > 0) {
+                        dialogue_state = TEXT3;
+                    } else {
+                        dialogue_state = OPTIONS;
+                    }
+                } else if (dialogue_state == TEXT3) {
+                    if (strlen(current_game_data->dialogues[current_dialogue_index].text3) > 0) {
+                        dialogue_state = OPTIONS;
+                    } else {
+                        dialogue_state = OPTIONS;
+                    }
+                }
+                display_dialogue(current_game_data, current_dialogue_index);
             }
         }
         SDL_Delay(100);

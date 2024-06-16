@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../../third-party/tomlc99/toml.h"
 #include "script_parser.h"
 
 void copy_string(char *dest, const char *src, size_t dest_size) {
@@ -71,7 +70,13 @@ void parse_characters(toml_table_t *root, GameData *gameData) {
                         free(avatar);
                         free(tachie);
 
-                        printf("解析角色: %s, 位置: %s\n", gameData->characters[char_index].name, gameData->characters[char_index].location);
+                        printf("解析角色: %s, 頭像: %s, 立繪: %s, 位置: %s\n", 
+                            gameData->characters[char_index].name, 
+                            gameData->characters[char_index].avatar, 
+                            gameData->characters[char_index].tachie, 
+                            gameData->characters[char_index].location);
+                    } else {
+                        printf("解析角色時失敗: %s\n", char_key);
                     }
                 }
             }
@@ -134,27 +139,51 @@ void parse_dialogues(toml_table_t *root, GameData *gameData) {
                 fprintf(stderr, "解析到對話: %s\n", gameData->dialogues[dialogue_index].name);
                 toml_raw_t raw_scene = toml_raw_in(dialogue, "scene");
                 toml_raw_t raw_character = toml_raw_in(dialogue, "character");
-                toml_raw_t raw_text = toml_raw_in(dialogue, "text");
+                toml_raw_t raw_text1 = toml_raw_in(dialogue, "text1");
+                toml_raw_t raw_text2 = toml_raw_in(dialogue, "text2");
+                toml_raw_t raw_text3 = toml_raw_in(dialogue, "text3");
                 toml_array_t *options = toml_array_in(dialogue, "options");
 
-                if (raw_scene && raw_character && raw_text) {
+                if (raw_scene && raw_character && raw_text1) {
                     char *scene = NULL;
                     char *character = NULL;
-                    char *text = NULL;
+                    char *text1 = NULL;
+                    char *text2 = NULL;
+                    char *text3 = NULL;
 
                     if (toml_rtos(raw_scene, &scene) == 0 &&
                         toml_rtos(raw_character, &character) == 0 &&
-                        toml_rtos(raw_text, &text) == 0) {
+                        toml_rtos(raw_text1, &text1) == 0) {
 
                         copy_string(gameData->dialogues[dialogue_index].scene, scene, sizeof(gameData->dialogues[dialogue_index].scene));
                         copy_string(gameData->dialogues[dialogue_index].character, character, sizeof(gameData->dialogues[dialogue_index].character));
-                        copy_string(gameData->dialogues[dialogue_index].text, text, sizeof(gameData->dialogues[dialogue_index].text));
+                        copy_string(gameData->dialogues[dialogue_index].text1, text1, sizeof(gameData->dialogues[dialogue_index].text1));
+
+                        if (raw_text2 && toml_rtos(raw_text2, &text2) == 0) {
+                            copy_string(gameData->dialogues[dialogue_index].text2, text2, sizeof(gameData->dialogues[dialogue_index].text2));
+                            free(text2);
+                        } else {
+                            gameData->dialogues[dialogue_index].text2[0] = '\0';
+                        }
+
+                        if (raw_text3 && toml_rtos(raw_text3, &text3) == 0) {
+                            copy_string(gameData->dialogues[dialogue_index].text3, text3, sizeof(gameData->dialogues[dialogue_index].text3));
+                            free(text3);
+                        } else {
+                            gameData->dialogues[dialogue_index].text3[0] = '\0';
+                        }
 
                         free(scene);
                         free(character);
-                        free(text);
+                        free(text1);
 
-                        printf("解析對話: %s, 場景: %s, 角色: %s, 內容: %s\n", gameData->dialogues[dialogue_index].name, gameData->dialogues[dialogue_index].scene, gameData->dialogues[dialogue_index].character, gameData->dialogues[dialogue_index].text);
+                        printf("解析對話: %s, 場景: %s, 角色: %s, 內容1: %s, 內容2: %s, 內容3: %s\n",
+                               gameData->dialogues[dialogue_index].name,
+                               gameData->dialogues[dialogue_index].scene,
+                               gameData->dialogues[dialogue_index].character,
+                               gameData->dialogues[dialogue_index].text1,
+                               gameData->dialogues[dialogue_index].text2,
+                               gameData->dialogues[dialogue_index].text3);
 
                         if (options) {
                             for (int j = 0; j < toml_array_nelem(options) && j < MAX_DIALOGUE_OPTIONS; j++) {
@@ -181,7 +210,10 @@ void parse_dialogues(toml_table_t *root, GameData *gameData) {
                                         free(option_text);
                                         free(next);
 
-                                        printf("解析對話選項: %s, 下一個對話: %s, 事件: %s\n", gameData->dialogues[dialogue_index].options[j].text, gameData->dialogues[dialogue_index].options[j].next, gameData->dialogues[dialogue_index].options[j].event);
+                                        printf("解析對話選項: %s, 下一個對話: %s, 事件: %s\n",
+                                               gameData->dialogues[dialogue_index].options[j].text,
+                                               gameData->dialogues[dialogue_index].options[j].next,
+                                               gameData->dialogues[dialogue_index].options[j].event);
                                     }
                                 }
                             }
@@ -193,6 +225,7 @@ void parse_dialogues(toml_table_t *root, GameData *gameData) {
         }
     }
 }
+
 
 void parse_events(toml_table_t *root, GameData *gameData) {
     toml_table_t *events = toml_table_in(root, "event");
@@ -260,9 +293,9 @@ void parse_events(toml_table_t *root, GameData *gameData) {
                 }
 
                 if (raw_amount) {
-                    int amount;
+                    int64_t amount;
                     if (toml_rtoi(raw_amount, &amount) == 0) {
-                        gameData->events[event_index].amount = amount;
+                        gameData->events[event_index].amount = (int)amount;
                     }
                 }
 
@@ -299,5 +332,16 @@ void parse_script(const char *filename, GameData *gameData) {
 
     toml_free(root);
     printf("解析完成並釋放 root\n");
-}
 
+    // 檢查角色資料是否成功解析
+    for (int i = 0; i < MAX_CHARACTERS; i++) {
+        if (strlen(gameData->characters[i].name) > 0) {
+            printf("角色 %d: %s, 頭像: %s, 立繪: %s, 位置: %s\n", 
+                i, 
+                gameData->characters[i].name, 
+                gameData->characters[i].avatar, 
+                gameData->characters[i].tachie, 
+                gameData->characters[i].location);
+        }
+    }
+}

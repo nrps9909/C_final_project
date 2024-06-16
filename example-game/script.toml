@@ -1,186 +1,880 @@
+[initial_heart_points]
+anna = 60
+patty = 60
+eunice = 60
+lucy = 60
+jamie = 60
+
+# 場景設定
+[scene.school-bus]
+name = "校車"
+background = "example-game/assets/scene/school-bus.bmp"
+
+[scene.classroom]
+name = "教室"
+background = "example-game/assets/scene/classroom.bmp"
+
+[scene.staircase]
+name = "樓梯間"
+background = "example-game/assets/scene/staircase.bmp"
+
+[scene.cafeteria]
+name = "食堂"
+background = "example-game/assets/scene/cafeteria.bmp"
+
+[scene.restaurant]
+name = "餐廳"
+background = "example-game/assets/scene/restaurant.bmp"
+
 [scene.library]
-name = "library"
+name = "圖書館"
 background = "example-game/assets/scene/library.bmp"
 
 [scene.meeting-room]
-name = "meeting-room"
+name = "會議室"
 background = "example-game/assets/scene/meeting-room.bmp"
 
-[scene.cafeteria]
-name = "cafeteria"
-background = "example-game/assets/scene/cafeteria.bmp"
+[scene.new-york]
+name = "紐約"
+background = "example-game/assets/scene/new-york.bmp"
 
-[character.classmate]
-name = "Alice (your classmate)"
-avatar = "example-game/assets/character/alice/avatar.bmp"
-tachie = "example-game/assets/character/alice/tachie.bmp"   
+[scene.macy]
+name = "Macy's 百貨公司"
+background = "example-game/assets/scene/macy.bmp"
 
-[character.ta]
-location = "meeting-room"
-name = "Teaching Assistant"
-avatar = "example-game/assets/character/ta/avatar.bmp" 
-tachie = "example-game/assets/character/ta/tachie.bmp"
+[scene.training-camp]
+name = "暑訓營地"
+background = "example-game/assets/scene/training-camp.bmp"
 
-[character.librarian]
-location = "library"
-name = "Librarian"
-avatar = "example-game/assets/character/librarian/avatar.bmp"
-tachie = "example-game/assets/character/librarian/tachie.bmp"
+[scene.school-gate]
+name = "校門口"
+background = "example-game/assets/scene/school-gate.bmp"
 
-[item.vision-pro]
-name = "vision Pro"
-description = "A spatial computer"
-icon = "example-game/assets/item/vision-pro/icon.bmp"
+# 角色設定
+[character.anna]
+name = "Anna"
+avatar = "example-game/assets/character/anna/avatar.bmp"
+tachie = "example-game/assets/character/anna/tachie.png"
 
-[item.book]  
-name = "book"
-description = "A mysterious old book"
-icon = "example-game/assets/item/book/icon.bmp"
+[character.patty]
+name = "Patty"
+avatar = "example-game/assets/character/patty/avatar.bmp"
+tachie = "example-game/assets/character/patty/tachie.png"
 
+[character.eunice]
+name = "Eunice"
+avatar = "example-game/assets/character/eunice/avatar.bmp"
+tachie = "example-game/assets/character/eunice/tachie.png"
+
+[character.lucy]
+name = "Lucy"
+avatar = "example-game/assets/character/lucy/avatar.bmp"
+tachie = "example-game/assets/character/lucy/tachie.png"
+location = "school-bus"
+
+[character.pony]
+name = "Lucy /w ponytail"
+tachie = "example-game/assets/character/pony/tachie.png"
+
+[character.jamie]
+name = "Jamie"
+avatar = "example-game/assets/character/jamie/avatar.bmp"
+tachie = "example-game/assets/character/jamie/tachie.png"
+
+# 物品設定
+[item.christmas-card]
+name = "聖誕卡片"
+description = "Patty的聖誕卡片"
+icon = "example-game/assets/item/christmas-card.webp"
+location = "cafeteria"
+
+[item.lip-balm]
+name = "護唇膏"
+description = "給Lucy的護唇膏"
+icon = "example-game/assets/item/lip_balm.png"
+location = "restaurant"
+
+[item.vinyl]
+name = "唱片"
+description = "給Jamie的唱片"
+icon = "example-game/assets/item/vinyl.png"
+location = "training-camp"
+
+# 事件設定
 [event.start]
-scene = "library"
-dialogue = "hello"
+scene = "school-bus"
+dialogue = "bus_introduction"
 
-[dialogue.hello]
-scene = "library"
-character = "classmate"
-text = "嗨！聽說今年的期末專題要做互動式小說引擎喔～"
-[[dialogue.hello.options]]
-text = "哇！太棒了！"
-next = "find_book"
-event = "start"
-[[dialogue.hello.options]]
-text = "那是啥鬼？"
-next = "explanation"
+[event.change_scene_to_classroom]
+scene = "classroom"
+dialogue = "classroom_introduction"
 
-[dialogue.explanation]
-scene = "library"
-character = "classmate"
-text = "就是一個讓你創建和玩你自己故事的遊戲平台。聽起來有點複雜，但應該蠻有趣的！"
-[[dialogue.explanation.options]]
-text = "聽起來不錯，告訴我更多！" 
-next = "find_book"
-[[dialogue.explanation.options]]
-text = "好吧，我可能會需要幫助。"
-next = "find_book"
+[event.change_scene_to_staircase]
+scene = "staircase"
+dialogue = "staircase_encounter"
 
-[dialogue.find_book]
-scene = "library"
-character = "librarian"
-text = "你好！這是你需要的那本書。"
-event = "acquire_book"
-[[dialogue.find_book.options]]
-text = "謝謝,我會好好利用這本書的。"
-next = "book_acquired"
+[event.staircase_reaction_event]
+scene = "staircase"
+dialogue = "staircase_reaction"
 
-[event.acquire_book]
+[event.change_scene_to_meeting_room]
+scene = "meeting-room"
+dialogue = "meeting_room_discussion"
+
+[event.change_scene_to_library]
+scene = "library"
+dialogue = "library_study"
+
+[event.change_scene_to_cafeteria]
+scene = "cafeteria"
+dialogue = "cafeteria_discussion"
+
+[event.change_scene_to_new_york]
+scene = "new-york"
+dialogue = "new_york_trip"
+
+[event.change_scene_to_school]
+scene = "classroom"
+dialogue = "return_from_new_york"
+
+[event.change_scene_to_training_camp]
+scene = "training-camp"
+dialogue = "training_camp_start"
+
+[event.change_scene_to_school_gate]
+scene = "school-gate"
+dialogue = "pony_tail_request"
+
+[event.find_christmas_card]
+scene = "classroom"
+dialogue = "find_christmas_card_dialogue"
+
+[event.find_anna_rose]
+scene = "classroom"
+dialogue = "find_anna_rose_dialogue"
+
+[event.add_christmas_card]
 action = "add_item"
-item = "book"
-dialogue = "book_acquired"
+item = "christmas-card"
 
-[dialogue.book_acquired]
-scene = "library"
-character = "classmate"
-text = "太好了！這本書看起來很有幫助。"
-[[dialogue.book_acquired.options]]
-text = "我們開始閱讀吧。"
-next = "read_book"
-[[dialogue.book_acquired.options]]
-text = "先去會議室找助教，看看他有什麼建議。"
-next = "ta_intro"
+[event.add_lip_balm]
+action = "add_item"
+item = "lip-balm"
 
-[dialogue.read_book]
-scene = "library"
-character = "classmate"
-text = "我們找到了關於專案的一些關鍵資訊，這本書真是太有用了。"
-[[dialogue.read_book.options]]
-text = "繼續努力，完成我們的專案吧！"
-next = "project_start"
-[[dialogue.read_book.options]]
-text = "我們還需要更多資料。"
-next = "find_more_books"
+[event.add_vinyl]
+action = "add_item"
+item = "vinyl"
 
-[event.project_start]
-scene = "library"
-dialogue = "start_working"
+[event.add_lip_balm_and_vinyl]
+action1 = "add_item"
+item1 = "lip-balm"
+action2 = "add_item"
+item2 = "vinyl"
 
-[dialogue.start_working]
-scene = "library"
-character = "classmate"
-text = "我們開始工作吧！"
-[[dialogue.start_working.options]]
-text = "好，我們先分工合作。"
-next = "work_division"
-[[dialogue.start_working.options]]
-text = "我們先列出所有需要做的事情。"
-next = "task_listing"
+[event.remove_christmas_card]
+action = "remove_item"
+item = "christmas-card"
 
-[dialogue.work_division]
-scene = "library"
-character = "classmate"
-text = "你負責劇本，我負責程式。我們兩週後再來討論進度。"
-[[dialogue.work_division.options]]
-text = "好的，沒問題！"
-next = "project_progress_good"
-[[dialogue.work_division.options]]
-text = "我覺得我們需要更多時間。"
-next = "project_progress_bad"
+[event.remove_lip_balm]
+action = "remove_item"
+item = "lip-balm"
 
-[dialogue.task_listing]
-scene = "library"
-character = "classmate"
-text = "我們列出了一個詳細的計劃，並按部就班地完成了所有工作。"
-[[dialogue.task_listing.options]]
-text = "太棒了，讓我們開始吧！"
-next = "project_progress_good"
-[[dialogue.task_listing.options]]
-text = "這計劃太複雜了，我們需要簡化一下。"
-next = "project_progress_neutral"
+[event.remove_vinyl]
+action = "remove_item"
+item = "vinyl"
 
-[dialogue.project_progress_good]
-scene = "library"
-character = "classmate"
-text = "經過兩週的努力,我們的專案進展非常順利,完成了大部分的任務。"
-[[dialogue.project_progress_good.options]]
-text = "太好了,讓我們繼續保持下去!"
-next = "ending_good"
+# 對話設定
+[dialogue.bus_introduction]
+scene = "school-gate"
+character = "lucy"
+text1 = "'掰~我們下次訓練見了'你校隊的隊友a.k.a同班三年的好朋友Lucy對你說"
+text2 = "你對她揮了揮手，準備要回家"
 
-[dialogue.project_progress_bad]
-scene = "library"
-character = "classmate"
-text = "兩週過去了,我們的進度有點落後。我們需要加把勁了。"
-[[dialogue.project_progress_bad.options]]
-text = "我們需要重新調整計劃,爭取按時完成。"
-next = "ending_neutral"
-[[dialogue.project_progress_bad.options]]
-text = "看來我們無法按時完成了。"
-next = "ending_bad"
+[[dialogue.bus_introduction.options]]
+text = "走，去搭校車了"
+next = "bus_introduction2"
 
-[dialogue.project_progress_neutral]
-scene = "library"
-character = "classmate"
-text = "經過兩週,我們完成了計劃的一部分,但還有一些工作需要完成。"
-[[dialogue.project_progress_neutral.options]]
-text = "讓我們集中精力,完成剩下的部分。"
-next = "ending_neutral"
+[dialogue.bus_introduction2]
+scene = "school-bus"
+character = "anna"
+text1 = "到了校車上，你發現你座位旁邊多了一個新的學妹"
+text2 = "嗨！我是Anna，我剛轉來這裡，很高興認識你！"
+[[dialogue.bus_introduction2.options]]
+text = "很高興認識你，Anna！"
+next = "anna_story"
+event = "change_scene_to_classroom"
 
-[dialogue.ending_good]
+[dialogue.classroom_introduction]
+scene = "classroom"
+character = "main"
+text1 = "隨著學期開始，你發現自己很常跟Anna碰面。"
+text2 = "妳們搭同一班校車，常常在走廊還有樓梯'不期而遇'，聊的都很開心"
+text3 = "Anna有個好朋友Patty，也想要跟你認識"
+[[dialogue.classroom_introduction.options]]
+text = "認識Patty"
+next = "patty_introduction_dialogue"
+event = "patty_introduction"
+
+[dialogue.patty_introduction]
+scene = "classroom"
+character = "patty"
+text = "哈囉學長!聽說你最近跟Anna很好欸~"
+[[dialogue.patty_introduction.options]]
+text = "哈哈，對阿，Anna也是挺好看挺好聊的啊!"
+next = "find_christmas_card_dialogue"
+event = "find_christmas_card"
+
+[dialogue.patty_introduction2]
+scene = "classroom"
+character = "patty"
+text1 = "嘿嘿嘿，我也是很可愛更好聊的歐!"
+text2 = "學長要來常常找我!"
+[[dialogue.patty_introduction2.options]]
+text = "沒問題的，好的阿哈哈哈"
+next = "interval"
+
+[dialogue.interval]
+scene = "classroom"
+character = "main"
+text1 = "就這樣，你逐漸與Anna還有Patty變得熟悉起來"
+text2 = "有時候會遇到Anna，有時候會遇到Patty，而有時候兩個人會一起遇到"
+[[dialogue.interval.options]]
+text = "你們就這樣順順的過完半個學期..."
+next = "find_christmas_card_dialogue"
+event = "change_scene_to_cafeteria"
+
+[dialogue.find_christmas_card_dialogue]
+scene = "cafeteria"
+character = "jamie"
+text = "聖誕節當天中午，Lucy的好閨密Jamie找上你，跟你說有個學妹指名道姓地要找你"
+[[dialogue.find_christmas_card_dialogue.options]]
+text = "你帶著疑惑，前去察看是誰"
+next = "christmas_card_story"
+event = "pickup_christmas_card"
+
+[dialogue.christmas_card_story]
+scene = "cafeteria"
+character = "patty"
+text1 = "這時，你注意到了Patty，她拿著卡片，正朝向你走過來" 
+text2 = "'學長，聖誕節快樂!這個是要寫給你的聖誕卡片~'Patty開心地說到"
+show_item = "christmas-card"
+[[dialogue.christmas_card_story.options]]
+text = "謝謝妳的聖誕卡片!"
+next = "accept_christmas_card"
+event = "add_christmas_card,increase_heart_patty"
+[[dialogue.christmas_card_story.options]]
+text = "沒關係，我心領神會了"
+next = "decline_christmas_card"
+event = "decrease_heart_patty"
+
+[dialogue.accept_christmas_card]
+scene = "classroom"
+character = "main"
+text = "你收下了Patty的聖誕卡片，她非常的開心。"
+[[dialogue.accept_christmas_card.options]]
+text = "繼續故事"
+next = "breakup_encounter"
+
+[dialogue.decline_christmas_card]
+scene = "classroom"
+character = "main"
+text = "你沒有收下卡片，Patty眼中透露出一些失望。"
+[[dialogue.decline_christmas_card.options]]
+text = "繼續故事"
+next = "breakup_encounter"
+
+[dialogue.breakup_encounter]
 scene = "library"
-character = "classmate"
-text = "恭喜！你們成功完成了期末專題，並得到了老師的高度評價。"
+character = "anna"
+text = "當天下午你去了圖書館，看到好像在哭的Anna。出於好心，你向前詢問她怎麼了。"
+[[dialogue.breakup_encounter.options]]
+text = "Anna妳怎麼了，怎麼好像在哭呢?"
+next = "breakup_encounter2"
+
+[dialogue.breakup_encounter2]
+scene = "library"
+character = "anna"
+text1 = "Anna說'我跟我從過小就在一起的男朋友分手了'"
+text2 = "不過，Anna轉身看到我，破涕為笑，說:'但沒關係，有學長妳在就好了'"
+[[dialogue.breakup_encounter2.options]]
+text = "你想要安慰她一下，不過又感覺哪裡怪怪的，一時之間不知道該如何是好"
+next = "staircase_encounter"
+
+[dialogue.staircase_encounter]
+scene = "staircase"
+character = ["patty", "anna"]
+text1 = "當天放學，在下樓梯的時候，整好遇到Anna還有Patty兩人"
+text2 = "Patty:'如果Anna跟你告白，你會接受嗎？' Anna:'如果Patty跟你告白，你會接受嗎？'"
+[[dialogue.staircase_encounter.options]]
+text = "一切來的好突然...我先閃一下好了..."
+next = "training_camp_start"
+event = "change_scene_to_training_camp"
+
+# Lucy劇情
+[dialogue.training_camp_start]
+scene = "training-camp"
+character = "lucy"
+text = "嘿，肌肉腦袋，你最近好像都比較少陪我聊天欸！"
+[[dialogue.training_camp_start.options]]
+text = "對阿，最近有兩個學妹跟我告白。"
+next = "training_camp_talk"
+[[dialogue.training_camp_start.options]]
+text = "妳才是肌肉腦袋吧！沒有啦，只是被學妹煩上了。"
+next = "training_camp_talk2"
+
+[dialogue.training_camp_talk]
+scene = "training-camp"
+character = "lucy"
+text1 = "哇!你們應該沒怎麼樣吧。"
+text2 = "其實，我挺喜歡和你一起訓練的，有你在感覺特別有趣。"
+[[dialogue.training_camp_talk.options]]
+text = "我也是，有你在訓練更有動力。"
+next = "training_camp_end"
+event = "training_camp_talk2"
+
+[dialogue.training_camp_talk2]
+scene = "training-camp"
+character = "lucy"
+text = "哈哈哈，沒事吧！"
+[[dialogue.training_camp_talk2.options]]
+text = "沒事啦!有妳在就好了。"
+next = "training_camp_end"
+event = "increase_heart_lucy"
+
+[dialogue.training_camp_end]
+scene = "training-camp"
+character = "main"
+text = "從那次之後，你和Lucy的關係變得更近了。"
+[[dialogue.training_camp_end.options]]
+text = "繼續故事"
+next = "anna_story"
+event = ["increase_heart_lucy", "change_scene_to_school_gate"]
+
+[dialogue.anna_story]
+scene = "school-gate"
+character = "anna"
+text1 = "過了幾天後，你在放學的時候遇到了Anna。她向前靠近了你，你們就這樣並肩著聊天。"
+text2 = "就這個時候，我們班上的一群女生出現了在背後，說: '你怎麼跟學妹在一起!'"
+[[dialogue.anna_story.options]]
+text = "笑笑地表示沒關係，繼續在Anna旁邊聊天"
+next = "accept_anna_talk"
+event = "increase_heart_anna"
+[[dialogue.anna_story.options]]
+text = "啊! 這樣好尷尬，轉身離開她"
+next = "decline_anna_talk"
+event = "decrease_heart_anna"
+
+[dialogue.accept_anna_talk]
+scene = "school-gate"
+character = "main"
+text = "你們就邊走邊聊的到校車上，結束這愉快的一天。"
+[[dialogue.accept_anna_talk.options]]
+text = "繼續故事"
+next = "pony_tail_request"
+
+[dialogue.decline_anna_talk]
+scene = "school-gate"
+character = "main"
+text = "你不以為意地離開，但是沒有看到Anna失落的表情。"
+[[dialogue.decline_anna_talk.options]]
+text = "繼續故事"
+next = "pony_tail_request"
+
+[dialogue.pony_tail_request]
+scene = "school-gate"
+character = "lucy"
+text = "離開之後，你剛好注意到了Lucy。因為冬天的關係，她好像小一陣子沒有綁馬尾了。"
+[[dialogue.pony_tail_request.options]]
+text = "向前問Lucy:'妳明天能綁馬尾來學校嗎?'"
+next = "pony_tail_response"
+
+[dialogue.pony_tail_request2]
+scene = "school-gate"
+character = "lucy"
+text1 = "她停下來，笑著對我說：'想要看我綁馬尾嗎？不用等明天，我現在就可以綁。'"
+text2 = "說完，她便綁了個馬尾。而我一直目不轉睛地看著她。"
+text3 = "'為什麼想看我的馬尾啊？'"
+[[dialogue.pony_tail_request2.options]]
+text = "因為妳綁馬尾好看"
+next = "pony_tail_response"
+event = "increase_heart_lucy_extra"
+
+[dialogue.pony_tail_response]
+scene = "school-gate"
+character = "pony"
+text1 = "'好啊，那我明天繼續綁馬尾來學校'"
+text2 = "Lucy笑得很開心"
+[[dialogue.pony_tail_response.options]]
+text = "繼續故事"
+event = "increase_heart_lucy"
+
+[dialogue.pony_tail_response2]
+scene = "school-bus"
+character = "main"
+text1 = "回到校車上，你覺得對兩個學妹有點不好意思"
+text2 = "Lucy笑得很開心"
+[[dialogue.pony_tail_response2.options]]
+text = "約Anna還有Patty隔天出來聊心"
+next = "meeting_room_discussion"
+
+[dialogue.meeting_room_discussion]
+scene = "meeting-room"
+character = "main"
+text = "在社團教室裡，氣氛有點微妙。"
+[[dialogue.meeting_room_discussion.options]]
+text = "和Anna聊聊"
+next = "anna_conversation"
+[[dialogue.meeting_room_discussion.options]]
+text = "和Patty聊聊"
+next = "patty_conversation"
+
+[dialogue.anna_conversation]
+scene = "meeting-room"
+character = "anna"
+text = "Anna看起來很開心，但有些話沒說出口。"
+[[dialogue.anna_conversation.options]]
+text = "怎麼啦?妳在想什麼，要不要跟我說一下?"
+next = "library_scene"
+event = "increase_heart_anna"
+[[dialogue.anna_conversation.options]]
+text = "哈哈，妳看起來現在心情有比較好了，那就沒事了"
+next = "return"
+event = "decrease_heart_anna"
+
+[dialogue.patty_conversation]
+scene = "meeting-room"
+character = "patty"
+text = "Patty看著我，神情有些落寞。她給我看Anna的限動。"
+[[dialogue.patty_conversation.options]]
+text = "接過手機看"
+next = "anna_story"
+event = "increase_heart_patty"
+[[dialogue.patty_conversation.options]]
+text = "不要看吧"
+next = "return"
+event = "increase_heart_patty"
+
+[dialogue.return]
+scene = "meeting-room"
+character = "main"
+text = "在社團教室裡，氣氛有點微妙。"
+[[dialogue.return.options]]
+text = "和Anna聊聊"
+next = "anna_conversation"
+[[dialogue.return.options]]
+text = "和Patty聊聊"
+next = "patty_conversation"
+[[dialogue.return.options]]
+text = "跟大家都講好了"
+next = "final_decision"
+
+[dialogue.library_scene]
+scene = "library"
+character = "anna"
+text = "其實學長，我一直覺得你很酷又很聰明，喜歡你很久了!你願意跟我在一起嗎?"
+[[dialogue.library_scene.options]]
+text = "接下來，你該如何選擇呢?"
+next = "final_decision"
+event = "increase_heart_anna"
+
+# 最終決定
+[dialogue.final_decision]
+scene = "classroom"
+character = ["patty", "anna"]
+text = "是時候決定你的感情了。"
+[[dialogue.final_decision.options]]
+text = "Anna妳那麼喜歡我，那我就跟妳在一起吧!"
+next = "ending_with_anna"
+event = "increase_heart_anna_final"
+[[dialogue.final_decision.options]]
+text = "Patty還是比較可愛"
+next = "ending_with_patty"
+event = "increase_heart_patty_final"
+[[dialogue.final_decision.options]]
+text = "其實，她們倆個你都很喜歡!"
+next = "harem_ending"
+event = "increase_heart_anna_final,increase_heart_patty_final"
+[[dialogue.final_decision.options]]
+text = "欸?但是那Lucy呢?我好像其實對她最有興趣..."
+next = "ending_friends"
+event = "neutral_ending"
+
+[dialogue.ending_with_anna]
+scene = "classroom"
+character = "anna"
+text = "你和Anna開始了一段關係，一起經歷了許多起伏。"
+[[dialogue.ending_with_anna.options]]
+text = "結局:跟Anna在一起"
 event = "game_over_good"
 
-[dialogue.ending_bad]
-scene = "library"
-character = "classmate"
-text = "很遺憾，你們的期末專題沒能按時完成，最終沒能通過。"
-event = "game_over_bad"
+[dialogue.ending_with_patty]
+scene = "classroom"
+character = "patty"
+text = "你和Patty開始了一段關係，珍惜彼此的陪伴。"
+[[dialogue.ending_with_patty.options]]
+text = "結局:跟Patty在一起"
+event = "game_over_good"
 
-[dialogue.ending_neutral]
-scene = "library"
-character = "classmate"
-text = "你們的期末專題最終完成了，但因為時間和資源的限制，只得到了中等評價。"
+[dialogue.harem_ending]
+scene = "classroom"
+character = ["anna", "patty"]
+text1 = "你成功地和Anna和Patty同時在一起，維持著微妙的平衡。"
+text2 = "只可惜，她們後來發現她們彼此才是互相的珍愛，於是美妙的3P終究還是結束了。"
+[[dialogue.harem_ending.options]]
+text = "上大學去囉"
+event = "game_over_harem"
+
+[dialogue.ending_friends]
+scene = "classroom"
+character = "main"
+text = "你選擇和她們繼續保持朋友關係，不過Lucy這個時候已經有男朋友了..."
+[[dialogue.ending_friends.options]]
+text = "上大學去囉"
 event = "game_over_neutral"
+
+[dialogue.college_introduction]
+scene = "classroom"
+character = "eunice"
+text1 = "上了大學之後，你跟一些高中同學失聯了，但倒也跟一些同學重新的聯絡起來。"
+text2 = "其中，一個當時跟你不錯的女生Eunice問你說，寒假的時候要不要去紐約玩"
+[[dialogue.college_introduction.options]]
+text = "好啊，一起出去吧！"
+next = "new_york_trip"
+event = "increase_heart_eunice"
+[[dialogue.college_introduction.options]]
+text = "先不用好了"
+next = "classroom_normal"
+
+[dialogue.new_york_trip]
+scene = "new-york"
+character = "eunice"
+text = "到了紐約，雖然寒冷，但是街道上依然是人擠人。"
+[[dialogue.new_york_trip.options]]
+text = "跟隨Eunice安排的行程"
+next = "new_york_adventure"
+event = "increase_heart_eunice"
+
+[dialogue.new_york_trip2]
+scene = "new-york"
+character = "eunice"
+text = "這時，你們要過馬路，不過綠燈剩不下幾秒了。Eunice抓起了你的袖口往前跑，並且就一直抓著。"
+[[dialogue.new_york_trip2.options]]
+text = "為甚麼要一直抓住我啊"
+next = "new_york_adventure"
+event = "increase_heart_eunice"
+
+[dialogue.new_york_trip3]
+scene = "new-york"
+character = "eunice"
+text1 = "'我不想要你走丟了'Eunice說"
+text2 = "而這時，你們經過了紐約著名的百年百貨公司Macy"
+[[dialogue.new_york_trip3.options]]
+text = "進去看一看"
+next = "new_york_macy"
+event = "increase_heart_eunice"
+[[dialogue.new_york_trip3.options]]
+text = "算了，懶的進去了。"
+next = "new_york_end"
+event = "decrease_heart_eunice"
+
+[dialogue.new_york_macy]
+scene = "macy"
+character = "eunice"
+text1 = "你們進去Macy逛，順便幫Eunice舅舅挑選了適合的生日禮物。"
+text2 = "你還看到了一些其他東西，感覺也可以順便買起來"
+show_item = ["lip_balm", "vinyl"]
+[[dialogue.new_york_macy.options]]
+text = "買個台灣找不到的護唇膏好了"
+next = "new_york_end"
+event = "add_lip_balm"
+[[dialogue.new_york_macy.options]]
+text = "買個限量版的唱片"
+next = "new_york_end"
+event = "add_vinyl"
+[[dialogue.new_york_macy.options]]
+text = "都買起來好了，說不定之後會用到?"
+next = "new_york_end"
+event = "add_lip_balm_and_vinyl"
+
+[dialogue.new_york_end]
+scene = "new-york"
+character = "eunice"
+text = "Eunice安排了一整天的行程，帶我去各種景點看，我們玩得非常開心。"
+[[dialogue.new_york_end.options]]
+text = "結束紐約行程"
+next = "return_from_new_york"
+event = "change_scene_to_school"
+
+[dialogue.return_from_new_york]
+scene = "classroom"
+character = "main"
+text = "回國後，Eunice的聯絡變得頻繁，但我漸漸發現，好像是我自己想多了。"
+[[dialogue.return_from_new_york.options]]
+text = "試圖更進一步"
+next = "eunice_bad_ending"
+event = "decrease_heart_eunice"
+[[dialogue.return_from_new_york.options]]
+text = "減少聯絡"
+next = "continue_story"
+
+[dialogue.eunice_bad_ending]
+scene = "classroom"
+character = "main"
+text = "原來是我自己自作多情，我們的關係逐漸疏遠，最後失去了聯繫。"
+[[dialogue.eunice_bad_ending.options]]
+text = "雖然不捨，但是還是下船吧QQ"
+next = "continue_story"
+
+[dialogue.continue_story]
+scene = "restaurant"
+character = "lucy"
+text = "過了一年，你跟許久未見的Lucy約出來吃個飯"
+[[dialogue.continue_story.options]]
+text = "繼續故事"
+next = "final_decision"
+
+[dialogue.continue_story_with_lip_balm]
+scene = "restaurant"
+character = "lucy"
+text1 = "過了一年，你跟許久未見的Lucy約出來吃個飯"
+text2 = "當初我買的護唇膏，她好像會有興趣欸，要不要拿給她"
+[[dialogue.continue_story_with_lip_balm.options]]
+text = "算了，懶得管那麼多"
+next = "lucy_end"
+[[dialogue.continue_story_with_lip_balm.options]]
+text = "拿出護唇膏給Lucy"
+next = "give_lip_balm_to_lucy"
+event = "remove_lip_balm,increase_heart_lucy_extra"
+
+[dialogue.give_lip_balm_to_lucy]
+scene = "restaurant"
+character = "lucy"
+text = "Lucy拿到這個尋找已久的護唇膏，開心不已"
+[[dialogue.give_lip_balm_to_lucy.options]]
+text = "你們的關係又更好了!"
+next = "lucy_end"
+
+[dialogue.lucy_end]
+scene = "restaurant"
+character = "lucy"
+text = "Lucy跟你分享了這幾年的故事，又提到了她的新男友。可惜，你好像沒機會了。"
+[[dialogue.lucy_end.options]]
+text = "黯然離場"
+next = "jamie_question"
+
+[dialogue.jamie_question]
+scene = "school-gate"
+character = "jamie"
+text1 = "這天，你返校想看一下學校，沒想到正巧遇到了Jamie"
+text2 = "你們認識很久，關係也好，不過或許是因為你一直對Lucy比較有興趣，因此對於身為閨密的Jamie就沒有那麼熟絡。"
+[[dialogue.jamie_question.options]]
+text = "我們...要去敘敘舊嗎?"
+next = "jamie_repeat_question"
+event = "increase_heart_jamie"
+[[dialogue.jamie_question.options]]
+text = "簡單聊幾句就好，我放不下對其他人的執念。"
+next = "real_end"
+
+[dialogue.jamie_repeat_question]
+scene = "training-camp"
+character = "jamie"
+text1 = "你跟Jamie跑很多地方，聊了很多天，彼此更加的了解。比如說，她很喜歡聽唱片。"
+[[dialogue.jamie_repeat_question.options]]
+text = "拿出限量版唱片給Jamie"
+next = "jamie_continue"
+event = "remove_vinyl,increase_heart_jamie"
+
+[dialogue.jamie_repeat_question_no_vinyl]
+scene = "training-camp"
+character = "jamie"
+text = "你跟Jamie跑很多地方，聊了很多天，彼此更加的了解。比如說，她很喜歡聽唱片。"
+[[dialogue.jamie_repeat_question_no_vinyl.options]]
+text = "當初原本有想要買，但是可惜沒買到"
+next = "jamie_continue"
+
+[dialogue.jamie_continue]
+scene = "cafeteria"
+character = "jamie"
+text = "於是乎，你就跟Jamie去了很多地方，聊了很多天，做了很多開心的事"
+[[dialogue.jamie_continue.options]]
+text = "我很喜歡跟Jamie相處，繼續下去!"
+next = "jamie_continue2"
+[[dialogue.jamie_continue.options]]
+text = "好像有點厭煩了，就到這邊就好吧。"
+next = "real_end"
+
+[dialogue.jamie_continue2]
+scene = "classroom"
+character = "jamie"
+text = "於是乎，你就跟Jamie去了很多地方，聊了很多天，做了很多開心的事"
+[[dialogue.jamie_continue2.options]]
+text = "我很喜歡跟Jamie相處，繼續下去!"
+next = "jamie_continue3"
+[[dialogue.jamie_continue2.options]]
+text = "好像有點厭煩了，就到這邊就好吧。"
+next = "real_end"
+
+[dialogue.jamie_continue3]
+scene = "library"
+character = "jamie"
+text = "於是乎，你就跟Jamie去了很多地方，聊了很多天，做了很多開心的事"
+[[dialogue.jamie_continue3.options]]
+text = "我很喜歡跟Jamie相處，繼續下去!"
+next = "jamie_continue4"
+[[dialogue.jamie_continue3.options]]
+text = "好像有點厭煩了，就到這邊就好吧。"
+next = "real_end"
+
+[dialogue.jamie_continue4]
+scene = "meeting-room"
+character = "jamie"
+text = "於是乎，你就跟Jamie去了很多地方，聊了很多天，做了很多開心的事"
+[[dialogue.jamie_continue4.options]]
+text = "我很喜歡跟Jamie相處，繼續下去!"
+next = "jamie_continue5"
+[[dialogue.jamie_continue4.options]]
+text = "好像有點厭煩了，就到這邊就好吧。"
+next = "real_end"
+
+[dialogue.jamie_continue5]
+scene = "new-york"
+character = "jamie"
+text = "你跟Jamie還特地的跑去了紐約，挺好玩的，你們都很喜歡。"
+[[dialogue.jamie_continue5.options]]
+text = "我發現我開始有些喜歡Jamie了。"
+next = "jamie_continue6"
+[[dialogue.jamie_continue5.options]]
+text = "好像有點累了，就到這邊就好吧。"
+next = "real_end"
+
+[dialogue.jamie_continue6]
+scene = "school-bus"
+character = "jamie"
+text = "你們到處跑，到處見面，也不知道現在的關係算什麼"
+[[dialogue.jamie_continue6.options]]
+text = "不知道，Jamie是不是也有些對我有興趣了呢?"
+next = "jamie_continue7"
+[[dialogue.jamie_continue6.options]]
+text = "但是，我感受不到她對我的喜歡..."
+next = "real_end"
+
+[dialogue.jamie_continue7]
+scene = "school-bus"
+character = "jamie"
+text = "你開始確定了，在經歷了那麼多事情，你們是最終可以再一起的。"
+[[dialogue.jamie_continue7.options]]
+text = "Jamie現在應該也是有些喜歡我了吧!"
+next = "jamie_continue8"
+[[dialogue.jamie_continue7.options]]
+text = "到底還要幾個，老子膩了!!!"
+next = "real_end"
+
+[dialogue.jamie_continue8]
+scene = "school-gate"
+character = "jamie"
+text = "又回到了這個發生過好多事情的地方"
+[[dialogue.jamie_continue8.options]]
+text = "不拘泥於過去，面對未來!"
+next = "jamie_continue9"
+[[dialogue.jamie_continue8.options]]
+text = "當初有Anna，有Lucy"
+next = "real_end"
+
+[dialogue.jamie_continue9]
+scene = "restaurant"
+character = "jamie"
+text = "終於，你下定決心，在這個好地方要跟Jamie告白了"
+[[dialogue.jamie_continue9.options]]
+text = "我們都認識了十年了，而我竟然沒有發現，其實妳才是一直最適合我的那一個。"
+next = "jamie_respond"
+
+[dialogue.jamie_respond]
+scene = "restaurant"
+character = "jamie"
+text = "'但是，我一直都沒有特別想要有對象耶'Jamie說"
+[[dialogue.jamie_respond.options]]
+text = "好吧，那我們就繼續當最好的朋友好了"
+next = "real_end"
+[[dialogue.jamie_respond.options]]
+text = "我們都這樣相處了那麼久，如果不是對象的話，那還可以是什麼呢?"
+next = "jamie_ending"
+
+[dialogue.jamie_ending]
+character = "jamie"
+text = "於是，在經歷了千辛萬苦，遇到了那麼多人，你還是成功的找到了那位你最喜歡的。恭喜你，再也不用去傷心難過了。"
+
+[dialogue.classroom_normal]
+scene = "classroom"
+character = "main"
+text = "我繼續上課，專注在自己的事情上。"
+[[dialogue.classroom_normal.options]]
+text = "繼續故事"
+next = "real_end"
+
+[dialogue.real_end]
+character = "main"
+text = "最終，你到頭來遇到了很多人，但是也沒有跟誰在一起。不過，這些都將會成為你最刻骨銘心的回憶。"
+
+# 愛心變化事件
+[event.increase_heart_anna]
+action = "increase_heart"
+character = "anna"
+amount = 10
+
+[event.increase_heart_patty]
+action = "increase_heart"
+character = "patty"
+amount = 10
+
+[event.increase_heart_eunice]
+action = "increase_heart"
+character = "eunice"
+amount = 10
+
+[event.increase_heart_lucy]
+action = "increase_heart"
+character = "lucy"
+amount = 10
+
+[event.increase_heart_lucy_extra]
+action = "increase_heart"
+character = "lucy"
+amount = 20
+
+[event.increase_heart_jamie]
+action = "increase_heart"
+character = "jamie"
+amount = 10
+
+[event.increase_heart_anna_final]
+action = "increase_heart"
+character = "anna"
+amount = 20
+
+[event.increase_heart_patty_final]
+action = "increase_heart"
+character = "patty"
+amount = 20
+
+[event.decrease_heart_eunice]
+action = "decrease_heart"
+character = "eunice"
+amount = 10
+
+[event.decrease_heart_anna]
+action = "decrease_heart"
+character = "anna"
+amount = 10
+
+[event.hidden_ending_check]
+action = "check_heart"
+character = "jamie"
+threshold = 100
+next = "jamie_hidden_ending"
+
+[event.neutral_ending]
+action = "neutral_ending"
+result = "neutral"
 
 [event.game_over_good]
 action = "end_game"
@@ -194,46 +888,10 @@ result = "bad"
 action = "end_game"
 result = "neutral"
 
-[dialogue.find_more_books]
-scene = "library"
-character = "classmate"
-text = "我們去找找其他的書，看看能不能找到更多有用的資料。"
-[[dialogue.find_more_books.options]]
-text = "好的，繼續找書。"
-next = "book_search"
-[[dialogue.find_more_books.options]]
-text = "先去會議室討論我們目前的進展吧。"
-next = "project_progress_neutral"
+[event.game_over_harem]
+action = "end_game"
+result = "harem"
 
-[dialogue.book_search]
-scene = "library"
-character = "librarian"
-text = "這是我能找到的所有相關書籍，希望對你們有幫助。"
-[[dialogue.book_search.options]]
-text = "謝謝，我們會仔細閱讀的。"
-next = "read_more_books"
-[[dialogue.book_search.options]]
-text = "我們需要更多的幫助，先去找助教討論。"
-next = "project_progress_neutral"
-
-[dialogue.read_more_books]
-scene = "library"
-character = "classmate"
-text = "這些書籍提供了很多有用的信息，我們可以開始動手做了。"
-[[dialogue.read_more_books.options]]
-text = "讓我們開始實作吧！"
-next = "project_progress_good"
-[[dialogue.read_more_books.options]]
-text = "先去會議室討論我們目前的進展吧。"
-next = "project_progress_neutral"
-
-[dialogue.ta_intro]
-scene = "meeting-room"
-character = "ta"
-text = "嗨,我是你們這個專案的助教。有什麼我可以幫助你們的嗎?"
-[[dialogue.ta_intro.options]]
-text = "我們在尋找一些參考資料,你有什麼建議嗎?"
-next = "project_progress_neutral"
-[[dialogue.ta_intro.options]]
-text = "我們目前進展順利,謝謝你的關心。"
-next = "project_progress_good"
+[event.game_over_hidden]
+action = "end_game"
+result = "hidden"

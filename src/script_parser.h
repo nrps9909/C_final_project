@@ -1,6 +1,6 @@
 #ifndef SCRIPT_PARSER_H
 #define SCRIPT_PARSER_H
-
+#include "../../third-party/tomlc99/toml.h"
 #include "game_engine.h"
 
 void parse_script(const char *filename, GameData *gameData);

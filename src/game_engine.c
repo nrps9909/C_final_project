@@ -1,16 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <SDL2/SDL.h>
 #include "game_engine.h"
-#include "script_parser.h"
 #include "ui_gui.h"
 
 void add_item_to_inventory(Player *player, Item *item) {
     if (player->inventory_count < MAX_INVENTORY_SIZE) {
-        strncpy(player->inventory[player->inventory_count], item->name, MAX_ITEM_NAME_LENGTH - 1);
-        player->inventory[player->inventory_count][MAX_ITEM_NAME_LENGTH - 1] = '\0';
+        size_t name_length = strlen(item->name);
+        if (name_length >= MAX_ITEM_NAME_LENGTH) {
+            name_length = MAX_ITEM_NAME_LENGTH - 1;
+        }
+        strncpy(player->inventory[player->inventory_count], item->name, name_length);
+        player->inventory[player->inventory_count][name_length] = '\0';  // 確保字符串終止
         player->inventory_count++;
         printf("物品 %s 已添加到背包\n", item->name);
     } else {
@@ -36,7 +37,7 @@ void display_inventory(Player *player) {
 }
 
 int find_scene_index(GameData *gameData, const char *scene_name) {
-    for (int i = 0; i < gameData->num_scenes; i++) {
+    for (int i = 0; i < MAX_SCENES; i++) {
         if (strcmp(gameData->scenes[i].name, scene_name) == 0) {
             return i;
         }
@@ -45,7 +46,7 @@ int find_scene_index(GameData *gameData, const char *scene_name) {
 }
 
 int find_dialogue_index(GameData *gameData, const char *dialogue_name) {
-    for (int i = 0; i < gameData->num_dialogues; i++) {
+    for (int i = 0; i < MAX_DIALOGUES; i++) {
         if (strcmp(gameData->dialogues[i].name, dialogue_name) == 0) {
             return i;
         }
@@ -54,7 +55,7 @@ int find_dialogue_index(GameData *gameData, const char *dialogue_name) {
 }
 
 int find_item_index(GameData *gameData, const char *item_name) {
-    for (int i = 0; i < gameData->num_items; i++) {
+    for (int i = 0; i < MAX_ITEMS; i++) {
         if (strcmp(gameData->items[i].name, item_name) == 0) {
             return i;
         }
@@ -63,7 +64,7 @@ int find_item_index(GameData *gameData, const char *item_name) {
 }
 
 int find_character_index(GameData *gameData, const char *character_name) {
-    for (int i = 0; i < gameData->num_characters; i++) {
+    for (int i = 0; i < MAX_CHARACTERS; i++) {
         if (strcmp(gameData->characters[i].name, character_name) == 0) {
             return i;
         }
@@ -83,7 +84,7 @@ void update_character_heart(GameData *gameData, const char *character_name, int 
 
 void display_character_hearts(GameData *gameData) {
     printf("角色好感度:\n");
-    for (int i = 0; i < gameData->num_characters; i++) {
+    for (int i = 0; i < MAX_CHARACTERS; i++) {
         if (strlen(gameData->characters[i].name) > 0) {
             printf("%s: %d\n", gameData->characters[i].name, gameData->characters[i].heart);
         }
@@ -94,7 +95,7 @@ void handle_event(GameData *gameData, Player *player, const char *event_name) {
     fprintf(stderr, "進入 handle_event 函數, 事件名稱: %s\n", event_name);
     
     int found_event = 0;
-    for (int i = 0; i < gameData->num_events; i++) {
+    for (int i = 0; i < MAX_EVENTS; i++) {
         if (strcmp(gameData->events[i].name, event_name) == 0) {
             found_event = 1;
             fprintf(stderr, "事件名稱匹配: %s\n", gameData->events[i].name);
@@ -149,15 +150,15 @@ void handle_event(GameData *gameData, Player *player, const char *event_name) {
 
 void play_game(GameData* gameData) {
     Player player = {"Player", 50, {{0}}, 0, 0, 0};
-    player.current_scene = find_scene_index(gameData, "library");
+    player.current_scene = find_scene_index(gameData, "school-bus");
     if (player.current_scene == -1) {
-        fprintf(stderr, "找不到初始場景: library\n");
+        fprintf(stderr, "找不到初始場景: school-bus\n");
         return;
     }
 
-    int dialogue_index = find_dialogue_index(gameData, "hello");
+    int dialogue_index = find_dialogue_index(gameData, "bus_introduction");
     if (dialogue_index == -1) {
-        fprintf(stderr, "找不到初始對話: hello\n");
+        fprintf(stderr, "找不到初始對話: bus_introduction\n");
         return;
     }
     player.current_dialogue = dialogue_index;
@@ -166,7 +167,7 @@ void play_game(GameData* gameData) {
         fprintf(stderr, "當前場景: %s\n", gameData->scenes[player.current_scene].name);
         display_scene(gameData, gameData->scenes[player.current_scene].name, &player);
         fprintf(stderr, "顯示對話之前\n");
-        display_dialogue(gameData, player.current_dialogue);
+        start_dialogue(gameData, player.current_dialogue);
         fprintf(stderr, "顯示對話之後\n");
         display_inventory(&player);
         int choice = get_user_choice();

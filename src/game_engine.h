@@ -1,15 +1,16 @@
 #ifndef GAME_ENGINE_H
 #define GAME_ENGINE_H
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
 
 // 定義常量
 #define MAX_INVENTORY_SIZE 10
 #define MAX_ITEM_NAME_LENGTH 50
 #define MAX_CHARACTERS 10
-#define MAX_DIALOGUE_OPTIONS 2
-#define MAX_SCENES 10
+#define MAX_DIALOGUE_OPTIONS 4
+#define MAX_SCENES 50
 #define MAX_ITEMS 10
-#define MAX_DIALOGUES 30
-#define MAX_EVENTS 40
+#define MAX_DIALOGUES 50
+#define MAX_EVENTS 50
 
 // 定義玩家結構體
 typedef struct {
@@ -56,7 +57,9 @@ typedef struct {
     char name[50]; // 對話名稱
     char scene[50]; // 對話所屬場景
     char character[50]; // 參與對話的角色
-    char text[200]; // 對話文本
+    char text1[256];
+    char text2[256];
+    char text3[256];
     DialogueOption options[MAX_DIALOGUE_OPTIONS]; // 對話選項
 } Dialogue;
 
