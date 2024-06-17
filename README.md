@@ -10,6 +10,8 @@
 sudo apt-get install libcurl4-openssl-dev
 sudo apt-get install libsdl2-dev
 sudo apt-get install libsdl2-image-dev
+sudo apt-get install libsdl2-ttf-dev
+
 cd .. 返回上一個資料夾
 ## 使用方法
 make
