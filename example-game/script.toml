@@ -204,7 +204,7 @@ text1 = "\"掰噗~我們下次訓練見了\" 你校隊的隊友、也是同班�
 text2 = "你對她揮了揮手，準備要回家"
 [[dialogue.bus_introduction.options]]
 text = "走，去搭校車了囉~"
-next = "bus_introduction2"
+next = "jamie_continue"
 event = ""
 
 [dialogue.bus_introduction2]
@@ -219,7 +219,7 @@ event = "change_scene_to_classroom"
 
 [dialogue.classroom_introduction]
 scene = "classroom"
-character = ""
+character = "Anna"
 text1 = "隨著學期開始，你發現自己很常跟Anna碰面。"
 text2 = "妳們搭同一班校車，常常在走廊還有樓樓梯間\"不期而遇\"，聊的都很開心"
 text3 = "Anna有個好朋友Patty，也想要跟你認識"
@@ -249,7 +249,7 @@ next = "interval"
 
 [dialogue.interval]
 scene = "classroom"
-character = ""
+character = "Patty&Anna"
 text1 = "就這樣，你逐漸與Anna還有Patty變得熟悉起來"
 text2 = "有時候會遇到Anna，有時候會遇到Patty，而有時候兩個人會一起遇到"
 [[dialogue.interval.options]]
@@ -283,7 +283,7 @@ event = "decrease_heart_patty"
 
 [dialogue.accept_christmas_card]
 scene = "classroom"
-character = ""
+character = "Patty"
 text1 = "你收下了Patty的聖誕卡片，她非常的開心。"
 [[dialogue.accept_christmas_card.options]]
 text = "繼續故事"
@@ -291,7 +291,7 @@ next = "breakup_encounter"
 
 [dialogue.decline_christmas_card]
 scene = "classroom"
-character = ""
+character = "Patty"
 text1 = "你沒有收下卡片，Patty眼中透露出一些失望。"
 [[dialogue.decline_christmas_card.options]]
 text = "繼續故事"
@@ -358,7 +358,7 @@ event = "increase_heart_lucy"
 
 [dialogue.training_camp_end]
 scene = "training-camp"
-character = ""
+character = "Lucy"
 text1 = "從那次之後，你和Lucy的關係變得更近了。"
 [[dialogue.training_camp_end.options]]
 text = "繼續故事"
@@ -381,7 +381,7 @@ event = "decrease_heart_anna"
 
 [dialogue.accept_anna_talk]
 scene = "school-gate"
-character = ""
+character = "Anna"
 text1 = "你們就邊走邊聊的到校車上，結束這愉快的一天。"
 [[dialogue.accept_anna_talk.options]]
 text = "繼續故事"
@@ -391,7 +391,7 @@ event = ""
 
 [dialogue.decline_anna_talk]
 scene = "school-gate"
-character = ""
+character = "Anna"
 text1 = "你不以為意地離開，但是沒有看到Anna失落的表情。"
 [[dialogue.decline_anna_talk.options]]
 text = "繼續故事"
@@ -437,7 +437,7 @@ next = "meeting_room_discussion"
 
 [dialogue.meeting_room_discussion]
 scene = "meeting-room"
-character = ""
+character = "Patty&Anna"
 text1 = "在社團教室裡，氣氛有點微妙。"
 [[dialogue.meeting_room_discussion.options]]
 text = "和Anna聊聊"
@@ -488,7 +488,7 @@ event = "increase_heart_anna"
 
 [dialogue.return]
 scene = "meeting-room"
-character = ""
+character = "Patty&Anna"
 text1 = "在社團教室裡，氣氛有點微妙。"
 [[dialogue.return.options]]
 text = "和Anna聊聊"
@@ -564,7 +564,7 @@ event = "change_scene_to_classroom"
 
 [dialogue.ending_friends]
 scene = "classroom"
-character = ""
+character = "Lucy"
 text1 = "你選擇和她們繼續保持朋友關係，不過Lucy這個時候已經有男朋友了..."
 [[dialogue.ending_friends.options]]
 text = "上大學去囉"
@@ -582,7 +582,7 @@ next = "new_york_trip"
 event = "increase_heart_eunice"
 [[dialogue.college_introduction.options]]
 text = "先不用好了"
-next = "classroom_normal"
+next = "jamie_question"
 
 [dialogue.new_york_trip]
 scene = "new-york"
@@ -659,7 +659,7 @@ next = "continue_story"
 
 [dialogue.eunice_bad_ending]
 scene = "classroom"
-character = ""
+character = "Eunice"
 text1 = "原來是我自己自作多情，我們的關係逐漸疏遠，最後失去了聯繫。"
 [[dialogue.eunice_bad_ending.options]]
 text = "雖然不捨，但是還是下船吧QQ"

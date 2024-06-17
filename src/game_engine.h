@@ -9,7 +9,7 @@
 #define MAX_DIALOGUE_OPTIONS 4
 #define MAX_SCENES 50
 #define MAX_ITEMS 10
-#define MAX_DIALOGUES 50
+#define MAX_DIALOGUES 100
 #define MAX_EVENTS 50
 
 // 定義玩家結構體
@@ -76,7 +76,7 @@ typedef struct
 {
     char name[50];      // 事件名稱
     char scene[50];     // 事件所屬場景
-    char dialogue[50];  // 事件所屬對話
+    char dialogue[100]; // 事件所屬對話
     char action[50];    // 事件動作
     char result[50];    // 事件結果
     char item[50];      // 事件物品

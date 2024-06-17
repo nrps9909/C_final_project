@@ -1,8 +1,8 @@
 #ifndef SOUND_MANAGER_H
 #define SOUND_MANAGER_H
 
-#include <AL/al.h>
-#include <AL/alc.h>
+#include "../../third-party/openal/al.h"
+#include "../../third-party/openal/alc.h"
 #include <stdio.h>
 #include "dr_wav.h"
 
