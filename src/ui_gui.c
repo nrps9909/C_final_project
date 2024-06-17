@@ -187,17 +187,6 @@ int is_character_in_current_dialogue(GameData *gameData, int char_index, int dia
 
 void display_scene(GameData *gameData, const char *scene_name, Player *player)
 {
-    int displayed_characters[MAX_CHARACTERS] = {0};
-    int num_displayed_characters = 0;
-
-    for (int i = 0; i < MAX_CHARACTERS; i++)
-    {
-        if (strlen(gameData->characters[i].name) > 0 && is_character_in_current_dialogue(gameData, i, player->current_dialogue))
-        {
-            displayed_characters[num_displayed_characters++] = i;
-        }
-    }
-
     if (!gameData)
     {
         fprintf(stderr, "gameData 為空指針\n");
@@ -265,12 +254,13 @@ void display_scene(GameData *gameData, const char *scene_name, Player *player)
         }
     }
 
-    // Display character avatars, names, and hearts in the top left corner
+    // Display all character avatars, names, and hearts in a single column
     int avatar_x = 60;
     int avatar_y = 40;
+    int avatar_spacing = 20; // Space between avatars
     for (int i = 1; i < MAX_CHARACTERS; i++)
     {
-        if (strlen(gameData->characters[i].name) > 0 && is_character_in_current_dialogue(gameData, i, player->current_dialogue))
+        if (strlen(gameData->characters[i].name) > 0)
         {
             // 加載並渲染頭像
             SDL_Surface *avatar = load_image(gameData->characters[i].avatar);
@@ -285,43 +275,42 @@ void display_scene(GameData *gameData, const char *scene_name, Player *player)
                 }
                 SDL_FreeSurface(avatar);
 
+                // 渲染角色名字和好感度
+                SDL_Color text_color = {0, 0, 0, 255}; // 黑色文字
+                char text_buffer[128];
+
                 // 渲染角色名字
-                SDL_Color bg_color = {255, 255, 255, 255}; // 白色背景
-                SDL_Color text_color = {0, 0, 0, 255};     // 黑色文字
-                SDL_Surface *name_surface = TTF_RenderUTF8_Blended(font, gameData->characters[i].name, text_color);
+                snprintf(text_buffer, sizeof(text_buffer), "%s", gameData->characters[i].name);
+                SDL_Surface *name_surface = TTF_RenderUTF8_Blended(font, text_buffer, text_color);
                 if (name_surface)
                 {
-                    SDL_Rect name_bg_rect = {avatar_x + avatar->w + 10, avatar_y, name_surface->w, name_surface->h};
-                    SDL_SetRenderDrawColor(renderer, bg_color.r, bg_color.g, bg_color.b, bg_color.a);
-                    SDL_RenderFillRect(renderer, &name_bg_rect);
+                    SDL_Rect name_rect = {avatar_x + avatar->w + 10, avatar_y, name_surface->w, name_surface->h};
                     SDL_Texture *name_texture = SDL_CreateTextureFromSurface(renderer, name_surface);
                     if (name_texture)
                     {
-                        SDL_RenderCopy(renderer, name_texture, NULL, &name_bg_rect);
+                        SDL_RenderCopy(renderer, name_texture, NULL, &name_rect);
                         SDL_DestroyTexture(name_texture);
                     }
                     SDL_FreeSurface(name_surface);
                 }
 
                 // 渲染好感度
-                char heart_text[50];
-                snprintf(heart_text, sizeof(heart_text), "好感度: %d", gameData->characters[i].heart);
-                SDL_Surface *heart_surface = TTF_RenderUTF8_Blended(font, heart_text, text_color);
+                snprintf(text_buffer, sizeof(text_buffer), "好感度: %d", gameData->characters[i].heart);
+                SDL_Surface *heart_surface = TTF_RenderUTF8_Blended(font, text_buffer, text_color);
                 if (heart_surface)
                 {
-                    SDL_Rect heart_bg_rect = {avatar_x + avatar->w + 10, avatar_y + name_surface->h + 10, heart_surface->w, heart_surface->h};
-                    SDL_RenderFillRect(renderer, &heart_bg_rect);
+                    SDL_Rect heart_rect = {avatar_x + avatar->w + 10, avatar_y + name_surface->h + 5, heart_surface->w, heart_surface->h};
                     SDL_Texture *heart_texture = SDL_CreateTextureFromSurface(renderer, heart_surface);
                     if (heart_texture)
                     {
-                        SDL_RenderCopy(renderer, heart_texture, NULL, &heart_bg_rect);
+                        SDL_RenderCopy(renderer, heart_texture, NULL, &heart_rect);
                         SDL_DestroyTexture(heart_texture);
                     }
                     SDL_FreeSurface(heart_surface);
                 }
 
-                // 增加固定的偏移量,以確保下一個角色的位置正確
-                avatar_y += avatar->h + 60;
+                // 增加縱向偏移量，確保下一個角色的位置正確
+                avatar_y += avatar->h + avatar_spacing;
             }
         }
     }
