@@ -67,6 +67,7 @@ typedef struct
     char text1[256];
     char text2[256];
     char text3[256];
+    char text4[256];                              // 新增這一行
     DialogueOption options[MAX_DIALOGUE_OPTIONS]; // 對話選項
 } Dialogue;
 

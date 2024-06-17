@@ -20,6 +20,7 @@ typedef enum
     TEXT1,
     TEXT2,
     TEXT3,
+    TEXT4,
     OPTIONS
 } DialogueState;
 
@@ -145,9 +146,9 @@ SDL_Surface *load_image(const char *path)
 
 void render_text(const char *message, int x, int y)
 {
-    if (!message || !renderer || !font)
+    if (!message || !renderer || !font || strlen(message) == 0)
     {
-        fprintf(stderr, "render_text 的參數無效\n");
+        fprintf(stderr, "render_text 的參數無效或文本為空\n");
         return;
     }
 
@@ -171,6 +172,18 @@ void render_text(const char *message, int x, int y)
 
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
+}
+
+int is_character_in_current_dialogue(GameData *gameData, int char_index, int dialogue_index)
+{
+    for (int i = 0; i < MAX_DIALOGUE_OPTIONS; i++)
+    {
+        if (strcmp(gameData->dialogues[dialogue_index].character, gameData->characters[char_index].name) == 0)
+        {
+            return 1; // Character is in the current dialogue
+        }
+    }
+    return 0; // Character is not in the current dialogue
 }
 
 void display_scene(GameData *gameData, const char *scene_name, Player *player)
@@ -242,12 +255,12 @@ void display_scene(GameData *gameData, const char *scene_name, Player *player)
         }
     }
 
-    // Display character avatars, names, and hearts in the top right corner
+    // Display character avatars, names, and hearts in the top left corner
     int avatar_x = 60;
     int avatar_y = 40;
     for (int i = 1; i < MAX_CHARACTERS; i++) // Start the loop from 1 to skip the first avatar
     {
-        if (strlen(gameData->characters[i].name) > 0)
+        if (strlen(gameData->characters[i].name) > 0 && is_character_in_current_dialogue(gameData, i, player->current_dialogue))
         {
             // Load and render avatar
             SDL_Surface *avatar = load_image(gameData->characters[i].avatar);
@@ -261,17 +274,18 @@ void display_scene(GameData *gameData, const char *scene_name, Player *player)
                     SDL_DestroyTexture(avatar_texture);
                 }
                 SDL_FreeSurface(avatar);
+
+                // Render character name to the right of the avatar
+                render_text(gameData->characters[i].name, avatar_x + avatar->w + 10, avatar_y);
+
+                // Render character heart to the right of the avatar, below the name
+                char heart_text[50];
+                snprintf(heart_text, sizeof(heart_text), "好感度: %d", gameData->characters[i].heart);
+                render_text(heart_text, avatar_x + avatar->w + 10, avatar_y + 30);
+
+                // Move to the next position for the next character
+                avatar_y += avatar->h + 20; // Adjust spacing between avatars
             }
-
-            // Render character name
-            render_text(gameData->characters[i].name, avatar_x, avatar_y + 100);
-
-            // Render character heart
-            char heart_text[50];
-            snprintf(heart_text, sizeof(heart_text), "好感度: %d", gameData->characters[i].heart);
-            render_text(heart_text, avatar_x, avatar_y + 130);
-
-            avatar_y += 150;
         }
     }
 
@@ -386,32 +400,26 @@ void display_dialogue(GameData *gameData, int dialogue_index)
 
     SDL_GetWindowSize(window, &window_width, &window_height);
 
-    // Make the dialogue box bigger and move it more to the right
     SDL_Rect dialogueRect = {window_width / 8, window_height - 280, 1200, 250};
 
-    // Check if dialogue box texture is available
     if (dialogue_box_texture)
     {
         SDL_RenderCopy(renderer, dialogue_box_texture, NULL, &dialogueRect);
     }
     else
     {
-        // If no texture is available, fill the rectangle with a solid color
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 128); // White color
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 128);
         SDL_RenderFillRect(renderer, &dialogueRect);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128); // Reset to default draw color (black)
-        SDL_RenderDrawRect(renderer, &dialogueRect);    // Draw the border
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
+        SDL_RenderDrawRect(renderer, &dialogueRect);
     }
 
-    // Adjust text positions towards the right
     int text_x = dialogueRect.x + 48;
     int text_y = dialogueRect.y + 20;
 
-    // Render character name
     render_text(gameData->dialogues[dialogue_index].character, text_x, text_y);
-    text_y += 62; // Adjust Y coordinate to avoid overlap with character name
+    text_y += 62;
 
-    // Render character tachie (standing picture)
     int char_index = find_character_index(gameData, gameData->dialogues[dialogue_index].character);
     if (char_index != -1)
     {
@@ -444,6 +452,10 @@ void display_dialogue(GameData *gameData, int dialogue_index)
         break;
     case TEXT3:
         render_text(gameData->dialogues[dialogue_index].text3, text_x, text_y);
+        dialogue_state = (gameData->dialogues[dialogue_index].text4[0] != '\0') ? TEXT4 : OPTIONS;
+        break;
+    case TEXT4:
+        render_text(gameData->dialogues[dialogue_index].text4, text_x, text_y);
         dialogue_state = OPTIONS;
         break;
     case OPTIONS:
@@ -506,6 +518,15 @@ int get_user_choice()
             }
             else if (e.type == SDL_MOUSEBUTTONDOWN)
             {
+                static Uint32 last_click_time = 0;
+                Uint32 click_time = SDL_GetTicks();
+                if (click_time - last_click_time < 300)
+                {
+                    // If the time between clicks is less than 300ms, ignore this click
+                    continue;
+                }
+                last_click_time = click_time;
+
                 if (e.button.button == SDL_BUTTON_LEFT && dialogue_state == OPTIONS)
                 {
                     int text_x = window_width / 10 + 134;
@@ -563,6 +584,17 @@ int get_user_choice()
                         }
                     }
                     else if (dialogue_state == TEXT3)
+                    {
+                        if (strlen(current_game_data->dialogues[current_dialogue_index].text4) > 0)
+                        {
+                            dialogue_state = TEXT4;
+                        }
+                        else
+                        {
+                            dialogue_state = OPTIONS;
+                        }
+                    }
+                    else if (dialogue_state == TEXT4)
                     {
                         dialogue_state = OPTIONS;
                     }

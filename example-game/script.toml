@@ -200,10 +200,10 @@ item = "vinyl"
 [dialogue.bus_introduction]
 scene = "school-gate"
 character = "Lucy"
-text1 = "\"掰噗~我們下次訓練見了\" 你校隊的隊友a.k.a同班三年的好朋友Lucy對你說"
+text1 = "\"掰噗~我們下次訓練見了\" 你校隊的隊友、也是同班三年的好朋友Lucy對你說"
 text2 = "你對她揮了揮手，準備要回家"
 [[dialogue.bus_introduction.options]]
-text = "走，去搭校車了"
+text = "走，去搭校車了囉~"
 next = "bus_introduction2"
 event = ""
 
@@ -221,12 +221,13 @@ event = "change_scene_to_classroom"
 scene = "classroom"
 character = ""
 text1 = "隨著學期開始，你發現自己很常跟Anna碰面。"
-text2 = "妳們搭同一班校車，常常在走廊還有樓\"不期而遇\"，聊的都很開心"
+text2 = "妳們搭同一班校車，常常在走廊還有樓樓梯間\"不期而遇\"，聊的都很開心"
 text3 = "Anna有個好朋友Patty，也想要跟你認識"
+text4 = "測試用途"
 [[dialogue.classroom_introduction.options]]
 text = "認識Patty"
 next = "patty_introduction"
-event = "change_scene_to_classroom2"
+event = ""
 
 [dialogue.patty_introduction]
 scene = "classroom"
@@ -240,7 +241,7 @@ event = "find_christmas_card"
 [dialogue.patty_introduction2]
 scene = "classroom"
 character = "Patty"
-text1 = "嘿嘿嘿，我也是很可愛更好聊的歐!"
+text1 = "嘿嘿嘿，我可是更可愛更好聊的歐!"
 text2 = "學長要來常常找我!"
 [[dialogue.patty_introduction2.options]]
 text = "沒問題的，好的阿哈哈哈"
