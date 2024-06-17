@@ -243,9 +243,9 @@ void display_scene(GameData *gameData, const char *scene_name, Player *player)
     }
 
     // Display character avatars, names, and hearts in the top right corner
-    int avatar_x = window_width * 0.8;
-    int avatar_y = 0;
-    for (int i = 0; i < MAX_CHARACTERS; i++)
+    int avatar_x = 60;
+    int avatar_y = 40;
+    for (int i = 1; i < MAX_CHARACTERS; i++) // Start the loop from 1 to skip the first avatar
     {
         if (strlen(gameData->characters[i].name) > 0)
         {
@@ -387,7 +387,7 @@ void display_dialogue(GameData *gameData, int dialogue_index)
     SDL_GetWindowSize(window, &window_width, &window_height);
 
     // Make the dialogue box bigger and move it more to the right
-    SDL_Rect dialogueRect = {window_width / 10, window_height - 350, 1200, 250};
+    SDL_Rect dialogueRect = {window_width / 8, window_height - 280, 1200, 250};
 
     // Check if dialogue box texture is available
     if (dialogue_box_texture)
@@ -404,8 +404,8 @@ void display_dialogue(GameData *gameData, int dialogue_index)
     }
 
     // Adjust text positions towards the right
-    int text_x = dialogueRect.x + 60;
-    int text_y = dialogueRect.y + 26;
+    int text_x = dialogueRect.x + 48;
+    int text_y = dialogueRect.y + 20;
 
     // Render character name
     render_text(gameData->dialogues[dialogue_index].character, text_x, text_y);
@@ -508,8 +508,8 @@ int get_user_choice()
             {
                 if (e.button.button == SDL_BUTTON_LEFT && dialogue_state == OPTIONS)
                 {
-                    int text_x = window_width / 10 + 100;
-                    int text_y = window_height - 350 + 90; // Increased Y coordinate for better alignment
+                    int text_x = window_width / 10 + 134;
+                    int text_y = window_height - 350 + 150; // Increased Y coordinate for better alignment
 
                     for (int i = 0; i < MAX_DIALOGUE_OPTIONS; i++)
                     {
@@ -569,7 +569,7 @@ int get_user_choice()
                     display_dialogue(current_game_data, current_dialogue_index);
                 }
             }
-        }   
+        }
         SDL_Delay(100);
     }
     return -1;

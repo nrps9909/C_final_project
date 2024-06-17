@@ -12,5 +12,8 @@ ALuint load_wav_file(const char *filename);
 void play_sound(ALuint buffer);
 void play_next_track();
 void update_music();
+void shuffle_tracks();
+void start_music_thread();
+void stop_music_thread();
 
 #endif // SOUND_MANAGER_H

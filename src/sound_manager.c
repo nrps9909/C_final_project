@@ -2,12 +2,17 @@
 #define DR_WAV_IMPLEMENTATION
 #include "dr_wav.h"
 #include <stdlib.h>
+#include <time.h>
+#include <pthread.h>
 
 static ALCdevice *device;
 static ALCcontext *context;
 static ALuint sources[1];
 static ALuint buffers[5];
 static int current_track = 0;
+static int track_order[5];
+static pthread_t music_thread;
+static int keep_playing = 1;
 
 void init_sound()
 {
@@ -36,10 +41,21 @@ void init_sound()
     buffers[2] = load_wav_file("example-game/assets/music/3.wav");
     buffers[3] = load_wav_file("example-game/assets/music/4.wav");
     buffers[4] = load_wav_file("example-game/assets/music/5.wav");
+
+    // Initialize track order
+    for (int i = 0; i < 5; i++)
+    {
+        track_order[i] = i;
+    }
+
+    shuffle_tracks();
 }
 
 void cleanup_sound()
 {
+    keep_playing = 0;
+    pthread_join(music_thread, NULL);
+
     alDeleteSources(1, sources);
     alDeleteBuffers(5, buffers);
     alcMakeContextCurrent(NULL);
@@ -104,7 +120,7 @@ void play_sound(ALuint buffer)
 
 void play_next_track()
 {
-    play_sound(buffers[current_track]);
+    play_sound(buffers[track_order[current_track]]);
     current_track = (current_track + 1) % 5;
 }
 
@@ -117,4 +133,38 @@ void update_music()
     {
         play_next_track();
     }
+}
+
+void shuffle_tracks()
+{
+    srand(time(NULL)); // Seed the random number generator
+    for (int i = 0; i < 5; i++)
+    {
+        int j = rand() % 5;
+        int temp = track_order[i];
+        track_order[i] = track_order[j];
+        track_order[j] = temp;
+    }
+}
+
+void *music_thread_func(void *arg)
+{
+    while (keep_playing)
+    {
+        update_music();
+        usleep(100000); // Sleep for 100 ms
+    }
+    return NULL;
+}
+
+void start_music_thread()
+{
+    keep_playing = 1;
+    pthread_create(&music_thread, NULL, music_thread_func, NULL);
+}
+
+void stop_music_thread()
+{
+    keep_playing = 0;
+    pthread_join(music_thread, NULL);
 }

@@ -20,10 +20,11 @@ int main(int argc, char *argv[])
     init_ui();
     init_sound();
 
-    play_next_track(); // Start playing the first music track
+    start_music_thread(); // Start the music playback thread
 
     play_game(&gameData);
 
+    stop_music_thread(); // Stop the music playback thread
     cleanup_sound();
     cleanup_ui();
 

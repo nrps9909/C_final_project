@@ -55,6 +55,11 @@ name = "校門口"
 background = "example-game/assets/scene/school-gate.bmp"
 
 # 角色設定
+[character.pattyanna]
+name = "Patty&Anna"
+avatar = "example-game/assets/character/anna/avatar.bmp"
+tachie = "example-game/assets/character/anna&patty/pattyanna.png"
+
 [character.anna]
 name = "Anna"
 avatar = "example-game/assets/character/anna/avatar.bmp"
