@@ -517,7 +517,7 @@ int get_user_choice()
                 if (e.button.button == SDL_BUTTON_LEFT && dialogue_state == OPTIONS)
                 {
                     int text_x = window_width / 10 + 134;
-                    int text_y = window_height - 350 + 150;
+                        int text_y = window_height - 350 + 150;
 
                     for (int i = 0; i < MAX_DIALOGUE_OPTIONS; i++)
                     {

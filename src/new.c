@@ -20,6 +20,7 @@ typedef enum
     TEXT1,
     TEXT2,
     TEXT3,
+    TEXT4,
     OPTIONS
 } DialogueState;
 
@@ -401,28 +402,24 @@ void display_dialogue(GameData *gameData, int dialogue_index)
 
     SDL_Rect dialogueRect = {window_width / 8, window_height - 280, 1200, 250};
 
-    // Check if dialogue box texture is available
     if (dialogue_box_texture)
     {
         SDL_RenderCopy(renderer, dialogue_box_texture, NULL, &dialogueRect);
     }
     else
     {
-        // If no texture is available, fill the rectangle with a solid color
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 128); // White color
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 128);
         SDL_RenderFillRect(renderer, &dialogueRect);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128); // Reset to default draw color (black)
-        SDL_RenderDrawRect(renderer, &dialogueRect);    // Draw the border
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
+        SDL_RenderDrawRect(renderer, &dialogueRect);
     }
 
     int text_x = dialogueRect.x + 48;
     int text_y = dialogueRect.y + 20;
 
-    // Render character name
     render_text(gameData->dialogues[dialogue_index].character, text_x, text_y);
-    text_y += 62; // Adjust Y coordinate to avoid overlap with character name
+    text_y += 62;
 
-    // Render character tachie (standing picture)
     int char_index = find_character_index(gameData, gameData->dialogues[dialogue_index].character);
     if (char_index != -1)
     {
@@ -447,12 +444,19 @@ void display_dialogue(GameData *gameData, int dialogue_index)
     {
     case TEXT1:
         render_text(gameData->dialogues[dialogue_index].text1, text_x, text_y);
+        dialogue_state = (gameData->dialogues[dialogue_index].text2[0] != '\0') ? TEXT2 : OPTIONS;
         break;
     case TEXT2:
         render_text(gameData->dialogues[dialogue_index].text2, text_x, text_y);
+        dialogue_state = (gameData->dialogues[dialogue_index].text3[0] != '\0') ? TEXT3 : OPTIONS;
         break;
     case TEXT3:
         render_text(gameData->dialogues[dialogue_index].text3, text_x, text_y);
+        dialogue_state = (gameData->dialogues[dialogue_index].text4[0] != '\0') ? TEXT4 : OPTIONS;
+        break;
+    case TEXT4:
+        render_text(gameData->dialogues[dialogue_index].text4, text_x, text_y);
+        dialogue_state = OPTIONS;
         break;
     case OPTIONS:
         for (int i = 0; i < MAX_DIALOGUE_OPTIONS; i++)
@@ -514,42 +518,20 @@ int get_user_choice()
             }
             else if (e.type == SDL_MOUSEBUTTONDOWN)
             {
-                if (e.button.button == SDL_BUTTON_LEFT && dialogue_state == OPTIONS)
+                static Uint32 last_click_time = 0;
+                Uint32 click_time = SDL_GetTicks();
+                if (click_time - last_click_time < 300)
                 {
-                    int text_x = window_width / 10 + 134;
-                    int text_y = window_height - 350 + 150;
-
-                    for (int i = 0; i < MAX_DIALOGUE_OPTIONS; i++)
-                    {
-                        if (strlen(current_game_data->dialogues[current_dialogue_index].options[i].text) > 0)
-                        {
-                            int text_width, text_height;
-                            TTF_SizeUTF8(font, current_game_data->dialogues[current_dialogue_index].options[i].text, &text_width, &text_height);
-
-                            SDL_Rect option_rect = {text_x, text_y + i * (text_height), text_width, text_height}; // Adjust padding between options
-
-                            // Render the clickable area for debugging
-                            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 128); // Red color with 50% opacity
-                            SDL_RenderFillRect(renderer, &option_rect);
-                            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Reset to black color
-
-                            if (e.button.x >= option_rect.x && e.button.x <= option_rect.x + option_rect.w &&
-                                e.button.y >= option_rect.y && e.button.y <= option_rect.y + option_rect.h)
-                            {
-                                if (strcmp(current_game_data->dialogues[current_dialogue_index].options[i].action, "end_game") == 0)
-                                {
-                                    delayed_quit(3000); // Delay for 3 seconds before quitting
-                                }
-                                return i + 1; // Return the option number (1-based index)
-                            }
-                        }
-                    }
-                    SDL_RenderPresent(renderer); // Update the renderer to show the debug rectangles
+                    // If the time between clicks is less than 300ms, ignore this click
+                    continue;
                 }
-                else
+                last_click_time = click_time;
+
+                if (e.button.button == SDL_BUTTON_LEFT)
                 {
-                    if (dialogue_state == TEXT1)
+                    switch (dialogue_state)
                     {
+                    case TEXT1:
                         if (strlen(current_game_data->dialogues[current_dialogue_index].text2) > 0)
                         {
                             dialogue_state = TEXT2;
@@ -558,9 +540,8 @@ int get_user_choice()
                         {
                             dialogue_state = OPTIONS;
                         }
-                    }
-                    else if (dialogue_state == TEXT2)
-                    {
+                        break;
+                    case TEXT2:
                         if (strlen(current_game_data->dialogues[current_dialogue_index].text3) > 0)
                         {
                             dialogue_state = TEXT3;
@@ -569,6 +550,57 @@ int get_user_choice()
                         {
                             dialogue_state = OPTIONS;
                         }
+                        break;
+                    case TEXT3:
+                        if (strlen(current_game_data->dialogues[current_dialogue_index].text4) > 0)
+                        {
+                            dialogue_state = TEXT4;
+                        }
+                        else
+                        {
+                            dialogue_state = OPTIONS;
+                        }
+                        break;
+                    case TEXT4:
+                        dialogue_state = OPTIONS;
+                        break;
+                    case OPTIONS:
+                        // Handle options click
+                        int text_x = window_width / 10 + 134;
+                        int text_y = window_height - 350 + 150;
+
+                        for (int i = 0; i < MAX_DIALOGUE_OPTIONS; i++)
+                        {
+                            if (strlen(current_game_data->dialogues[current_dialogue_index].options[i].text) > 0)
+                            {
+                                int text_width, text_height;
+                                TTF_SizeUTF8(font, current_game_data->dialogues[current_dialogue_index].options[i].text, &text_width, &text_height);
+
+                                SDL_Rect option_rect = {text_x, text_y + i * (text_height), text_width, text_height};
+
+                                if (e.button.x >= option_rect.x && e.button.x <= option_rect.x + option_rect.w &&
+                                    e.button.y >= option_rect.y && e.button.y <= option_rect.y + option_rect.h)
+                                {
+                                    if (strcmp(current_game_data->dialogues[current_dialogue_index].options[i].action, "end_game") == 0)
+                                    {
+                                        delayed_quit(3000); // Delay for 3 seconds before quitting
+                                    }
+                                    return i + 1; // Return the option number (1-based index)
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+                else if (e.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    if (dialogue_state == TEXT1)
+                    {
+                        dialogue_state = (current_game_data->dialogues[current_dialogue_index].text2[0] != '\0') ? TEXT2 : OPTIONS;
+                    }
+                    else if (dialogue_state == TEXT2)
+                    {
+                        dialogue_state = (current_game_data->dialogues[current_dialogue_index].text3[0] != '\0') ? TEXT3 : OPTIONS;
                     }
                     else if (dialogue_state == TEXT3)
                     {
@@ -577,8 +609,8 @@ int get_user_choice()
                     display_dialogue(current_game_data, current_dialogue_index);
                 }
             }
+            SDL_Delay(100);
         }
-        SDL_Delay(100);
+        return -1;
     }
-    return -1;
 }
