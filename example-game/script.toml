@@ -200,6 +200,7 @@ text2 = "你對她揮了揮手，準備要回家"
 [[dialogue.bus_introduction.options]]
 text = "走，去搭校車了"
 next = "bus_introduction2"
+event = ""
 
 [dialogue.bus_introduction2]
 scene = "school-bus"

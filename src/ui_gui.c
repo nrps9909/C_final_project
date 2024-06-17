@@ -447,12 +447,15 @@ void display_dialogue(GameData *gameData, int dialogue_index)
     {
     case TEXT1:
         render_text(gameData->dialogues[dialogue_index].text1, text_x, text_y);
+        dialogue_state = (gameData->dialogues[dialogue_index].text2[0] != '\0') ? TEXT2 : OPTIONS;
         break;
     case TEXT2:
         render_text(gameData->dialogues[dialogue_index].text2, text_x, text_y);
+        dialogue_state = (gameData->dialogues[dialogue_index].text3[0] != '\0') ? TEXT3 : OPTIONS;
         break;
     case TEXT3:
         render_text(gameData->dialogues[dialogue_index].text3, text_x, text_y);
+        dialogue_state = OPTIONS;
         break;
     case OPTIONS:
         for (int i = 0; i < MAX_DIALOGUE_OPTIONS; i++)
@@ -577,7 +580,7 @@ int get_user_choice()
                     display_dialogue(current_game_data, current_dialogue_index);
                 }
             }
-        }
+        }   
         SDL_Delay(100);
     }
     return -1;

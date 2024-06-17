@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -I/usr/local/include/SDL2 -Ithird-party/tomlc99 -g -Wall -Wextra -O2
-LDFLAGS = -L/usr/local/lib -lSDL2 -lSDL2_image -lSDL2_ttf -lcurl -lm
+CFLAGS = -I/usr/local/include/SDL2 -Ithird-party/tomlc99 -Ithird-party -I. -g -Wall -Wextra -O2
+LDFLAGS = -L/usr/local/lib -lSDL2 -lSDL2_image -lSDL2_ttf -lopenal -lcurl -lm
 
 SRC_DIR = src
 OBJ_DIR = obj
