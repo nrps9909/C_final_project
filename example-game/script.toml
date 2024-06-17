@@ -204,7 +204,7 @@ text1 = "\"掰噗~我們下次訓練見了\" 你校隊的隊友、也是同班�
 text2 = "你對她揮了揮手，準備要回家"
 [[dialogue.bus_introduction.options]]
 text = "走，去搭校車了囉~"
-next = "jamie_continue"
+next = "bus_introduction2"
 event = ""
 
 [dialogue.bus_introduction2]

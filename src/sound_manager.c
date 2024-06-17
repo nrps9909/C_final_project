@@ -152,7 +152,6 @@ void *music_thread_func(void *arg)
     while (keep_playing)
     {
         update_music();
-        usleep(100000); // Sleep for 100 ms
     }
     return NULL;
 }

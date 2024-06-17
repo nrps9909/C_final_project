@@ -187,6 +187,17 @@ int is_character_in_current_dialogue(GameData *gameData, int char_index, int dia
 
 void display_scene(GameData *gameData, const char *scene_name, Player *player)
 {
+    int displayed_characters[MAX_CHARACTERS] = {0};
+    int num_displayed_characters = 0;
+
+    for (int i = 0; i < MAX_CHARACTERS; i++)
+    {
+        if (strlen(gameData->characters[i].name) > 0 && is_character_in_current_dialogue(gameData, i, player->current_dialogue))
+        {
+            displayed_characters[num_displayed_characters++] = i;
+        }
+    }
+
     if (!gameData)
     {
         fprintf(stderr, "gameData 為空指針\n");
@@ -274,16 +285,43 @@ void display_scene(GameData *gameData, const char *scene_name, Player *player)
                 }
                 SDL_FreeSurface(avatar);
 
-                // Render character name to the right of the avatar
-                render_text(gameData->characters[i].name, avatar_x + avatar->w + 10, avatar_y);
+                // Render character name to the right of the avatar with a background rectangle
+                SDL_Color bg_color = {255, 255, 255, 255}; // White background color
+                SDL_Color text_color = {0, 0, 0, 255};     // Black text color
+                SDL_Surface *name_surface = TTF_RenderUTF8_Blended(font, gameData->characters[i].name, text_color);
+                if (name_surface)
+                {
+                    SDL_Rect name_bg_rect = {avatar_x + avatar->w + 10, avatar_y, name_surface->w, name_surface->h};
+                    SDL_SetRenderDrawColor(renderer, bg_color.r, bg_color.g, bg_color.b, bg_color.a);
+                    SDL_RenderFillRect(renderer, &name_bg_rect);
+                    SDL_Texture *name_texture = SDL_CreateTextureFromSurface(renderer, name_surface);
+                    if (name_texture)
+                    {
+                        SDL_RenderCopy(renderer, name_texture, NULL, &name_bg_rect);
+                        SDL_DestroyTexture(name_texture);
+                    }
+                    SDL_FreeSurface(name_surface);
+                }
 
-                // Render character heart to the right of the avatar, below the name
+                // Render character heart to the right of the avatar, below the name with a background rectangle
                 char heart_text[50];
                 snprintf(heart_text, sizeof(heart_text), "好感度: %d", gameData->characters[i].heart);
-                render_text(heart_text, avatar_x + avatar->w + 10, avatar_y + 30);
+                SDL_Surface *heart_surface = TTF_RenderUTF8_Blended(font, heart_text, text_color);
+                if (heart_surface)
+                {
+                    SDL_Rect heart_bg_rect = {avatar_x + avatar->w + 10, avatar_y + name_surface->h + 10, heart_surface->w, heart_surface->h};
+                    SDL_RenderFillRect(renderer, &heart_bg_rect);
+                    SDL_Texture *heart_texture = SDL_CreateTextureFromSurface(renderer, heart_surface);
+                    if (heart_texture)
+                    {
+                        SDL_RenderCopy(renderer, heart_texture, NULL, &heart_bg_rect);
+                        SDL_DestroyTexture(heart_texture);
+                    }
+                    SDL_FreeSurface(heart_surface);
+                }
 
                 // Move to the next position for the next character
-                avatar_y += avatar->h + 20; // Adjust spacing between avatars
+                avatar_y += avatar->h + 40; // Adjust spacing between avatars
             }
         }
     }
