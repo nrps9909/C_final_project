@@ -64,8 +64,8 @@ void init_ui()
     }
 
     window = SDL_CreateWindow("Interactive Fiction Engine",
-                            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                            window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
+                              SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                              window_width, window_height, SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP);
     if (!window)
     {
         fprintf(stderr, "Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -591,11 +591,26 @@ int get_user_choice()
                         }
                         break;
                     }
+                }
+                else if (e.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    if (dialogue_state == TEXT1)
+                    {
+                        dialogue_state = (current_game_data->dialogues[current_dialogue_index].text2[0] != '\0') ? TEXT2 : OPTIONS;
+                    }
+                    else if (dialogue_state == TEXT2)
+                    {
+                        dialogue_state = (current_game_data->dialogues[current_dialogue_index].text3[0] != '\0') ? TEXT3 : OPTIONS;
+                    }
+                    else if (dialogue_state == TEXT3)
+                    {
+                        dialogue_state = OPTIONS;
+                    }
                     display_dialogue(current_game_data, current_dialogue_index);
                 }
             }
+            SDL_Delay(100);
         }
-        SDL_Delay(100);
+        return -1;
     }
-    return -1;
 }
