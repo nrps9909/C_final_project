@@ -147,7 +147,7 @@ void shuffle_tracks()
     }
 }
 
-void *music_thread_func(void *arg)
+void *music_thread_func()
 {
     while (keep_playing)
     {

@@ -268,11 +268,11 @@ void display_scene(GameData *gameData, const char *scene_name, Player *player)
     // Display character avatars, names, and hearts in the top left corner
     int avatar_x = 60;
     int avatar_y = 40;
-    for (int i = 1; i < MAX_CHARACTERS; i++) // Start the loop from 1 to skip the first avatar
+    for (int i = 1; i < MAX_CHARACTERS; i++)
     {
         if (strlen(gameData->characters[i].name) > 0 && is_character_in_current_dialogue(gameData, i, player->current_dialogue))
         {
-            // Load and render avatar
+            // 加載並渲染頭像
             SDL_Surface *avatar = load_image(gameData->characters[i].avatar);
             if (avatar)
             {
@@ -285,9 +285,9 @@ void display_scene(GameData *gameData, const char *scene_name, Player *player)
                 }
                 SDL_FreeSurface(avatar);
 
-                // Render character name to the right of the avatar with a background rectangle
-                SDL_Color bg_color = {255, 255, 255, 255}; // White background color
-                SDL_Color text_color = {0, 0, 0, 255};     // Black text color
+                // 渲染角色名字
+                SDL_Color bg_color = {255, 255, 255, 255}; // 白色背景
+                SDL_Color text_color = {0, 0, 0, 255};     // 黑色文字
                 SDL_Surface *name_surface = TTF_RenderUTF8_Blended(font, gameData->characters[i].name, text_color);
                 if (name_surface)
                 {
@@ -303,7 +303,7 @@ void display_scene(GameData *gameData, const char *scene_name, Player *player)
                     SDL_FreeSurface(name_surface);
                 }
 
-                // Render character heart to the right of the avatar, below the name with a background rectangle
+                // 渲染好感度
                 char heart_text[50];
                 snprintf(heart_text, sizeof(heart_text), "好感度: %d", gameData->characters[i].heart);
                 SDL_Surface *heart_surface = TTF_RenderUTF8_Blended(font, heart_text, text_color);
@@ -320,8 +320,8 @@ void display_scene(GameData *gameData, const char *scene_name, Player *player)
                     SDL_FreeSurface(heart_surface);
                 }
 
-                // Move to the next position for the next character
-                avatar_y += avatar->h + 40; // Adjust spacing between avatars
+                // 增加固定的偏移量,以確保下一個角色的位置正確
+                avatar_y += avatar->h + 60;
             }
         }
     }
