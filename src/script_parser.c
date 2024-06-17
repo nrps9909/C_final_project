@@ -142,6 +142,7 @@ void parse_dialogues(toml_table_t *root, GameData *gameData) {
                 toml_raw_t raw_text1 = toml_raw_in(dialogue, "text1");
                 toml_raw_t raw_text2 = toml_raw_in(dialogue, "text2");
                 toml_raw_t raw_text3 = toml_raw_in(dialogue, "text3");
+                toml_raw_t raw_text4 = toml_raw_in(dialogue, "text4");  // 新增對text4的解析
                 toml_array_t *options = toml_array_in(dialogue, "options");
 
                 if (raw_scene && raw_character && raw_text1) {
@@ -150,6 +151,7 @@ void parse_dialogues(toml_table_t *root, GameData *gameData) {
                     char *text1 = NULL;
                     char *text2 = NULL;
                     char *text3 = NULL;
+                    char *text4 = NULL;  // 新增text4的變量
 
                     if (toml_rtos(raw_scene, &scene) == 0 &&
                         toml_rtos(raw_character, &character) == 0 &&
@@ -173,17 +175,25 @@ void parse_dialogues(toml_table_t *root, GameData *gameData) {
                             gameData->dialogues[dialogue_index].text3[0] = '\0';
                         }
 
+                        if (raw_text4 && toml_rtos(raw_text4, &text4) == 0) {  // 新增text4的處理
+                            copy_string(gameData->dialogues[dialogue_index].text4, text4, sizeof(gameData->dialogues[dialogue_index].text4));
+                            free(text4);
+                        } else {
+                            gameData->dialogues[dialogue_index].text4[0] = '\0';
+                        }
+
                         free(scene);
                         free(character);
                         free(text1);
 
-                        printf("解析對話: %s, 場景: %s, 角色: %s, 內容1: %s, 內容2: %s, 內容3: %s\n",
+                        printf("解析對話: %s, 場景: %s, 角色: %s, 內容1: %s, 內容2: %s, 內容3: %s, 內容4: %s\n",
                                gameData->dialogues[dialogue_index].name,
                                gameData->dialogues[dialogue_index].scene,
                                gameData->dialogues[dialogue_index].character,
                                gameData->dialogues[dialogue_index].text1,
                                gameData->dialogues[dialogue_index].text2,
-                               gameData->dialogues[dialogue_index].text3);
+                               gameData->dialogues[dialogue_index].text3,
+                               gameData->dialogues[dialogue_index].text4);  // 新增text4的輸出
 
                         if (options) {
                             for (int j = 0; j < toml_array_nelem(options) && j < MAX_DIALOGUE_OPTIONS; j++) {
@@ -225,6 +235,7 @@ void parse_dialogues(toml_table_t *root, GameData *gameData) {
         }
     }
 }
+
 
 
 void parse_events(toml_table_t *root, GameData *gameData) {

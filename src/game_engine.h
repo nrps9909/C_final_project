@@ -55,7 +55,7 @@ typedef struct
     char text[200];  // 對話選項文本
     char next[50];   // 下一個對話名稱
     char event[50];  // 觸發事件
-    char action[50]; // Add this line to include the action field
+    char action[50]; // 動作
 } DialogueOption;
 
 // 定義對話結構體
@@ -107,5 +107,7 @@ void display_emotion(Player *player);                                           
 void display_inventory(Player *player);                                                  // 顯示玩家物品欄
 void update_character_heart(GameData *gameData, const char *character_name, int amount); // 更新角色好感度
 void display_character_hearts(GameData *gameData);                                       // 顯示角色好感度
+void parse_script(const char *filename, GameData *gameData);                             // 解析腳本
+int find_dialogue_index_by_name(GameData *gameData, const char *name);                   // 根據名稱查找對話索引
 
 #endif // GAME_ENGINE_H
