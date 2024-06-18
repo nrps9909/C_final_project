@@ -15,18 +15,18 @@ sudo apt-get install libsdl2-ttf-dev
 編譯程式
 克隆專案並進入專案目錄：
 bash
-Copy code
-git clone https://github.com/your-repo/interactive_fiction_engine.git
+
+git clone https://github.com/nrps9909/C_final_project.git
 cd interactive_fiction_engine
 編譯程式：
 bash
-Copy code
+
 make
 使用方法
 將遊戲劇本放置在 example-game 目錄下。劇本文件命名為 script.toml。
 運行遊戲：
 bash
-Copy code
+
 cd example-game
 ../bin/interactive_fiction_engine script.toml
 劇本格式
