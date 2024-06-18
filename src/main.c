@@ -1,9 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <SDL2/SDL.h>
 #include "game_engine.h"
+#include "script_parser.h"
 #include "ui_gui.h"
 #include "sound_manager.h"
+
+// Function prototypes
+void play_next_track();
+void update_music();
 
 int main(int argc, char *argv[])
 {
@@ -17,15 +23,41 @@ int main(int argc, char *argv[])
     memset(&gameData, 0, sizeof(GameData));
     parse_script(argv[1], &gameData);
 
+    // Initialize SDL and other systems
     init_ui();
     init_sound();
 
-    start_music_thread(); // Start the music playback thread
+    // Initialize player (add this if you have a Player structure)
+    Player player;
+    memset(&player, 0, sizeof(Player));
+    // Populate player with initial data if necessary
 
-    play_game(&gameData);
+    // Play the first track
+    play_next_track();
 
-    stop_music_thread(); // Stop the music playback thread
+    // Your game logic loop
+    while (1)
+    {
+        // Handle events and update game state
+        if (!play_game(&gameData)) // Ensure play_game returns an int
+        {
+            break;
+        }
+
+        // Update music
+        update_music();
+
+        // Display the scene with the player data
+        display_scene(&gameData, "some_scene_name", &player);
+
+        // Delay to control frame rate
+        SDL_Delay(16); // Approximately 60 FPS
+    }
+
+    // Cleanup sound system
     cleanup_sound();
+
+    // Cleanup SDL and other systems
     cleanup_ui();
 
     return 0;

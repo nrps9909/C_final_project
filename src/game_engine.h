@@ -95,7 +95,8 @@ typedef struct
 } GameData;
 
 // 函式原型
-void play_game(GameData *gameData);                                                      // 遊戲主函式
+int play_game(GameData *gameData);
+// 遊戲主函式
 void handle_event(GameData *gameData, Player *player, const char *event_name);           // 處理事件
 int find_scene_index(GameData *gameData, const char *scene_name);                        // 找到場景索引
 int find_dialogue_index(GameData *gameData, const char *dialogue_name);                  // 找到對話索引

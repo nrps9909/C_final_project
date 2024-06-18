@@ -81,14 +81,15 @@ name = "Lucy"
 avatar = "example-game/assets/character/lucy/avatar.bmp"
 tachie = "example-game/assets/character/lucy/tachie.png"
 
-[character.pony]
-name = "Lucy /w ponytail"
-tachie = "example-game/assets/character/pony/tachie.png"
-
 [character.jamie]
 name = "Jamie"
 avatar = "example-game/assets/character/jamie/avatar.bmp"
 tachie = "example-game/assets/character/jamie/tachie.png"
+
+[character.pony]
+name = "Lucy (pony-tail)"
+tachie = "example-game/assets/character/pony/tachie.png"
+avatar = "example-game/assets/character/lucy/avatar.bmp"
 
 # 物品設定
 [item.christmas-card]
@@ -419,7 +420,7 @@ event = "increase_heart_lucy_extra"
 
 [dialogue.pony_tail_response]
 scene = "school-gate"
-character = "Lucy"
+character = "Lucy (pony-tail)"
 text1 = "\"好啊，那我明天繼續綁馬尾來學校\""
 text2 = "Lucy笑得很開心"
 [[dialogue.pony_tail_response.options]]

@@ -199,21 +199,21 @@ void handle_event(GameData *gameData, Player *player, const char *event_name)
     fflush(stdout);
 }
 
-void play_game(GameData *gameData)
+int play_game(GameData *gameData)
 {
     Player player = {"Player", 50, {{0}}, 0, 0, 0};
     player.current_scene = find_scene_index(gameData, "school-gate");
     if (player.current_scene == -1)
     {
         fprintf(stderr, "找不到初始場景: school-bus\n");
-        return;
+        return 1;
     }
 
     int dialogue_index = find_dialogue_index(gameData, "bus_introduction");
     if (dialogue_index == -1)
     {
         fprintf(stderr, "找不到初始對話: bus_introduction\n");
-        return;
+        return 1;
     }
     player.current_dialogue = dialogue_index;
 
@@ -306,4 +306,5 @@ void play_game(GameData *gameData)
             fprintf(stderr, "選項的下一個對話為空\n");
         }
     }
+    return 1;
 }
