@@ -79,7 +79,7 @@ void parse_characters(toml_table_t *root, GameData *gameData)
                         copy_string(gameData->characters[char_index].name, name, sizeof(gameData->characters[char_index].name));
                         copy_string(gameData->characters[char_index].avatar, avatar, sizeof(gameData->characters[char_index].avatar));
                         copy_string(gameData->characters[char_index].tachie, tachie, sizeof(gameData->characters[char_index].tachie));
-                        gameData->characters[char_index].heart = 60; // 預設好感度為60
+                        gameData->characters[char_index].heart = 30; // 預設好感度為60
 
                         free(name);
                         free(avatar);
