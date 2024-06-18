@@ -25,6 +25,8 @@ cd example-game
     ```
 3. 運行遊戲：
     ```bash
+    make clean
+    make
     bin/interactive_fiction_engine example-game/script.toml
     ```
 
